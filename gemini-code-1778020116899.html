@@ -1,0 +1,336 @@
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBBZ-wkPE-O6xlEaY_VY_yszAvSzPqYi1g",
+    authDomain: "sipat-balaska.firebaseapp.com",
+    projectId: "sipat-balaska",
+    storageBucket: "sipat-balaska.firebasestorage.app",
+    messagingSenderId: "843068034203",
+    appId: "1:843068034203:web:5aad2089bc7b58549f8a3e"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const rankingRef = doc(db, "sipat_quiz", "ranking_online");
+
+  window.firebaseAPI = {
+    saveRanking: async (rankingData) => {
+      try {
+        await setDoc(rankingRef, { ranking: rankingData });
+      } catch (error) {
+        console.error("Erro ao salvar no Firestore:", error);
+      }
+    },
+    loadRanking: async () => {
+      try {
+        const docSnap = await getDoc(rankingRef);
+        if (docSnap.exists()) {
+          return docSnap.data().ranking || [];
+        }
+      } catch (error) {
+        console.error("Erro ao carregar do Firestore:", error);
+      }
+      return [];
+    }
+  };
+</script>
+
+<script>
+// ——— LISTA DE PERGUNTAS (Corrigida e Fechada) ———
+const Q = [
+  // ——— GRUPO 8 ———
+  {g:8,cat:'epi',diff:'easy', q:'Para que serve a máscara PFF2 (respirador de partículas)?', a:['Proteção contra gases e vapores orgânicos','Filtração de partículas sólidas e aerossóis líquidos','Proteção exclusiva contra poeira de cimento','Uso exclusivo em áreas hospitalares e de saúde'], c:1, h:'O "P" de PFF significa "Peça Facial Filtrante" — foca em partículas.'},
+  {g:8,cat:'epi',diff:'easy', q:'Qual a função da proteção lateral nos óculos de segurança?', a:['Melhorar a visão periférica do operador','Proteger os olhos de partículas vindas de qualquer direção','Proteção apenas contra luz intensa e UV','Uso obrigatório apenas em trabalho noturno'], c:1, h:'A proteção lateral complementa a frontal — partículas vêm de vários ângulos.'},
+  {g:8,cat:'epi',diff:'easy', q:'Qual EPC é usado para isolar fisicamente uma área de obra ou risco?', a:['Cone de sinalização e fita zebrada','Capacete de segurança do operador','Extintor de incêndio posicionado no local','Cinto de segurança do trabalhador'], c:0, h:'Você já viu esses itens em obras na rua — impedem a entrada de pessoas não autorizadas.'},
+  {g:8,cat:'epi',diff:'hard', q:'O que é o NRRsf — nível de atenuação de ruído — em protetores auriculares?', a:['Nível de Resistência ao Risco em situação física','Medida que indica quanto o protetor reduz o ruído que chega ao ouvido','Norma de Regulamentação de Ruído seguro para indústrias','Número de Registro do equipamento no INMETRO'], c:1, h:'Quanto maior o NRRsf, mais o protetor atenua o som — usado para selecionar o EPI correto.'},
+  {g:8,cat:'epi',diff:'hard', q:'Em trabalho de soldagem, quais EPIs são tipicamente necessários?', a:['Apenas avental de couro e luvas finas','Máscara de solda, avental de raspa, luvas de raspa, perneiras e botina','Somente óculos escuros e luvas de borracha','Respirador e óculos de proteção transparente'], c:1, h:'Soldagem envolve radiação UV, fagulhas, respingos de metal, fumos e calor intenso.'},
+
+  // ——— GRUPO 9 ———
+  {g:9,cat:'seg',diff:'easy', q:'O que é incêndio de Classe A?', a:['Incêndio em líquidos inflamáveis','Incêndio em materiais sólidos que deixam brasas (madeira, papel, tecido)','Incêndio em equipamentos elétricos energizados','Incêndio em metais combustíveis como magnésio'], c:1, h:'É o tipo mais comum — pense em fogueira ou papel queimando.'},
+  {g:9,cat:'seg',diff:'easy', q:'Por que NÃO se deve usar água para apagar incêndio Classe C (elétrico)?', a:['A água não apaga fogo em equipamentos elétricos','A água conduz eletricidade e pode eletrocutar o combatente','A água estraga irreparavelmente os equipamentos elétricos','Não há restrição ao uso de água em incêndio elétrico'], c:1, h:'Pense nas propriedades físicas da água — ela conduz corrente elétrica.'},
+  {g:9,cat:'seg',diff:'easy', q:'O que representa o "Triângulo do Fogo"?', a:['Sinalização triangular de área de incêndio','Os três elementos necessários para o fogo existir: combustível, comburente e calor','Os três tipos de extintores mais utilizados na indústria','As três etapas do combate a incêndio'], c:1, h:'Retire qualquer um dos vértices e o fogo se apaga — esse é o princípio do combate.'},
+  {g:9,cat:'seg',diff:'hard', q:'De acordo com a norma, qual a periodicidade mínima obrigatória para recarga de extintores?', a:['1 ano','2 anos','5 anos','Depende do fabricante, sem prazo legal definido'], c:0, h:'A recarga anual é obrigatória — além da inspeção visual que deve ser feita mensalmente.'},
+  {g:9,cat:'seg',diff:'hard', q:'O que é "Permissão de Trabalho" (PT) em segurança do trabalho?', a:['Documento de admissão do trabalhador na função','Documento formal que autoriza e controla tarefas de alto risco com medidas de segurança','Autorização formal para realização de horas extras','Licença para trabalhar em regime de turno noturno'], c:1, h:'Emitida antes de atividades como espaço confinado, trabalho a quente e trabalho em altura.'},
+
+  // ——— GRUPO 10 ———
+  {g:10,cat:'epi',diff:'easy', q:'Qual o EPI correto para proteger as mãos ao manusear objetos cortantes?', a:['Luvas de látex descartáveis','Luvas de malha de aço ou raspa de couro resistente a corte','Luvas cirúrgicas de procedimento','Qualquer luva grossa disponível'], c:1, h:'Precisa ser resistente ao corte certificado — luva comum pode ser perfurada facilmente.'},
+  {g:10,cat:'epi',diff:'easy', q:'O colete refletivo é utilizado principalmente para:', a:['Proteção contra chuva e intempéries','Aumentar a visibilidade do trabalhador em locais de baixa luminosidade ou tráfego de veículos','Proteção contra calor radiante de fornos','Identificação exclusiva de visitantes'], c:1, h:'Reflete a luz — essencial em trabalho noturno ou com movimentação de veículos.'},
+  {g:10,cat:'epi',diff:'easy', q:'Qual EPC protege trabalhadores de quedas em aberturas no piso e bordas elevadas?', a:['Apenas fita zebrada de sinalização','Guarda-corpo e grades de proteção fixas','Cone de sinalização laranja','Somente cinto de segurança individual'], c:1, h:'Deve ser uma barreira física resistente — não apenas uma sinalização visual.'},
+  {g:10,cat:'epi',diff:'hard', q:'O que é "higienização de EPI" e por que é importante?', a:['Processo de descarte correto e seguro após o uso','Limpeza e descontaminação para manter eficiência protetora e saúde do usuário','Procedimento administrativo para devolver EPI danificado','Registro fotográfico do estado de conservação do equipamento'], c:1, h:'EPI sujo pode perder eficiência protetora ou contaminar o usuário com o agente de risco.'},
+  {g:10,cat:'epi',diff:'hard', q:'Qual a responsabilidade legal do empregador quando o trabalhador se recusa a usar o EPI?', a:['O empregador fica automaticamente isento de qualquer responsabilidade','Deve advertir, registrar por escrito e aplicar medidas disciplinares, comprovando a exigência','Deve demitir o trabalhador por justa causa imediatamente','Não há obrigação legal específica neste caso'], c:1, h:'A lei exige que o empregador COMPROVE que exigiu o uso — não basta apenas fornecer.'}
+];
+
+/* ============================================================
+   CONSTANTS & STATE
+   ============================================================ */
+const BLOCK_SIZE = 7;
+const TOTAL_Q    = Q.length;
+
+let S = {
+  player:    {name:'', dept:''},
+  pool:      [],
+  poolPos:   0,
+  blockQ:    [],
+  bqi:       0,
+  blockNum:  1,
+  totalBlocks: 7,
+  score:     0,
+  correct:   0,
+  blockCorrect: 0,
+  hintUsed:  false,
+  answered:  false,
+  ranking:   [],
+  processingNext: false
+};
+
+// Carrega ranking ao iniciar
+window.addEventListener('load', async () => {
+  if (window.firebaseAPI) {
+    S.ranking = await window.firebaseAPI.loadRanking();
+  }
+});
+
+/* ============================================================
+   FUNCTIONS (Lógica do Jogo)
+   ============================================================ */
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// Audio Engine simplificada
+let actx = null;
+function ac(){ if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return actx; }
+function playTone(freqs, type='sine', dur=0.35, vol=0.22){
+  try{
+    const ctx = ac(); if(!ctx) return;
+    freqs.forEach((f,i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = type; o.frequency.value = f;
+      const t = ctx.currentTime + i*0.1;
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(vol,t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+      o.start(t); o.stop(t+dur+0.05);
+    });
+  }catch(e){}
+}
+const sfx = {
+  correct: ()=> playTone([523,659,784,1047],'sine',0.38,0.22),
+  wrong:   ()=> playTone([300,200],'sawtooth',0.5,0.25),
+  hint:    ()=> playTone([880],'sine',0.25,0.15),
+  next:    ()=> playTone([440,550],'sine',0.22,0.18),
+  fanfare: ()=>{ playTone([523,659,784],'sine',0.5,0.2); setTimeout(()=>playTone([1047],'sine',0.6,0.25),300); },
+  rank:    ()=> playTone([784,880,1047],'sine',0.45,0.18)
+};
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showRegister(){
+  goTo('screen-register');
+  document.getElementById('inp-name').value='';
+  document.getElementById('inp-dept').value='';
+  document.getElementById('inp-outro').value='';
+  document.getElementById('field-outro').style.display='none';
+}
+
+function initPoolIfNeeded(){
+  if(!S.pool.length || S.poolPos >= TOTAL_Q - BLOCK_SIZE){
+    S.pool = shuffle([...Array(TOTAL_Q).keys()]);
+    S.poolPos = 0;
+  }
+}
+
+function startGame(){
+  const name      = document.getElementById('inp-name').value.trim();
+  const deptSel   = document.getElementById('inp-dept').value;
+  const deptOutro = document.getElementById('inp-outro').value.trim();
+  const dept      = deptSel === 'Outro' ? (deptOutro || '') : deptSel;
+
+  if(!name || !deptSel || (deptSel === 'Outro' && !deptOutro)){
+    alert('Preencha todos os campos!'); return;
+  }
+
+  // Verifica se o jogador já existe para resetar ou manter
+  const existingIdx = S.ranking.findIndex(r => r.name.toLowerCase() === name.toLowerCase() && r.dept.toLowerCase() === dept.toLowerCase());
+  if(existingIdx >= 0){
+    if(!confirm(`O participante "${name}" já jogou. Deseja iniciar uma nova tentativa e atualizar sua pontuação?`)) return;
+  }
+
+  S.player = {name, dept};
+  S.score = 0; S.correct = 0; S.blockCorrect = 0; S.bqi = 0;
+  
+  initPoolIfNeeded();
+  S.blockQ = S.pool.slice(S.poolPos, S.poolPos + BLOCK_SIZE).map(i => {
+    const q = Q[i];
+    const order = shuffle([0,1,2,3]);
+    return { ...q, a: order.map(j => q.a[j]), c: order.indexOf(q.c) };
+  });
+  S.poolPos += BLOCK_SIZE;
+
+  document.getElementById('gh-name').textContent = name;
+  document.getElementById('gh-dept').textContent = dept;
+  document.getElementById('gh-score').textContent = '0';
+  showNextPlayer();
+}
+
+function showNextPlayer(){
+  document.getElementById('next-name').textContent = S.player.name;
+  document.getElementById('next-dept').textContent = S.player.dept;
+  goTo('screen-next');
+  sfx.next();
+  let secs = 3;
+  const num = document.getElementById('cd-num');
+  const fill = document.getElementById('ring-fill');
+  const circ = 2 * Math.PI * 35;
+  fill.style.strokeDasharray = circ;
+  
+  function tick(){
+    num.textContent = secs;
+    fill.style.strokeDashoffset = circ * (1 - secs/3);
+    if(secs <= 0){ goTo('screen-game'); renderQuestion(); return; }
+    secs--; setTimeout(tick, 1000);
+  }
+  tick();
+}
+
+function renderQuestion(){
+  const q = S.blockQ[S.bqi];
+  S.hintUsed = false; S.answered = false;
+  const pct = ((S.bqi+1)/BLOCK_SIZE*100).toFixed(0);
+  document.getElementById('prog-bar').style.width = pct+'%';
+  document.getElementById('gh-plabel').textContent = `Pergunta ${S.bqi+1} de ${BLOCK_SIZE}`;
+  
+  const pill = document.getElementById('cat-pill');
+  pill.textContent = q.cat==='seg' ? '🦺 Segurança' : '🧤 EPI/EPC';
+  pill.className = 'cat-pill '+(q.cat==='seg'?'pill-seg':'pill-epi');
+  
+  document.getElementById('q-text').textContent = q.q;
+  const opts = document.getElementById('opts');
+  opts.innerHTML = '';
+  ['A','B','C','D'].forEach((l,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-letter">${l}</span><span>${q.a[i]}</span>`;
+    btn.onclick = ()=>pick(i,btn);
+    opts.appendChild(btn);
+  });
+  
+  document.getElementById('btn-hint').disabled = false;
+  document.getElementById('hint-box').style.display = 'none';
+  document.getElementById('feedback-overlay').style.display = 'none';
+}
+
+function pick(idx, btn){
+  if(S.answered) return;
+  S.answered = true;
+  const q = S.blockQ[S.bqi];
+  const allBtns = document.querySelectorAll('.opt');
+  const isOk = idx === q.c;
+
+  if(isOk){
+    btn.classList.add('correct');
+    S.score += (q.diff==='hard' ? 20 : 10);
+    S.correct++; S.blockCorrect++;
+    document.getElementById('gh-score').textContent = S.score;
+    sfx.correct();
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.c].classList.add('reveal-correct');
+    sfx.wrong();
+  }
+  
+  showFeedback(isOk);
+  setTimeout(()=>{
+    S.bqi++;
+    if(S.bqi < BLOCK_SIZE) renderQuestion();
+    else { saveToRanking(); showBlockRanking(); }
+  }, 1800);
+}
+
+function showFeedback(ok){
+  const el = document.getElementById('feedback-overlay');
+  el.style.display = 'flex';
+  el.className = 'show ' + (ok ? 'fb-correct' : 'fb-wrong');
+  document.getElementById('fb-word').textContent = ok ? 'CORRETO!' : 'ERROU!';
+}
+
+function useHint(){
+  if(S.hintUsed || S.answered) return;
+  S.hintUsed = true; sfx.hint();
+  const hb = document.getElementById('hint-box');
+  hb.textContent = '💡 ' + S.blockQ[S.bqi].h;
+  hb.style.display = 'block';
+  document.getElementById('btn-hint').disabled = true;
+}
+
+function saveToRanking(){
+  const trophy = S.blockCorrect>=6?'🏆':S.blockCorrect>=4?'🥇':S.blockCorrect>=2?'🥈':'🥉';
+  const idx = S.ranking.findIndex(r => r.name===S.player.name && r.dept===S.player.dept);
+  
+  const data = {
+    name: S.player.name, 
+    dept: S.player.dept, 
+    score: S.score, 
+    correct: S.correct, 
+    trophy: trophy,
+    rounds: (idx >= 0 ? (S.ranking[idx].rounds || 1) + 1 : 1)
+  };
+
+  if(idx >= 0) S.ranking[idx] = data;
+  else S.ranking.push(data);
+
+  S.ranking.sort((a,b)=>b.score - a.score);
+  if(S.ranking.length > 30) S.ranking = S.ranking.slice(0, 30);
+  
+  if (window.firebaseAPI) window.firebaseAPI.saveRanking(S.ranking);
+}
+
+function showBlockRanking(){
+  sfx.rank();
+  goTo('screen-block-rank');
+  document.getElementById('br-my-name').textContent = S.player.name;
+  document.getElementById('br-my-score').textContent = S.score;
+  const list = document.getElementById('br-list');
+  list.innerHTML = S.ranking.map((p,i)=>`
+    <div class="rank-item ${p.name===S.player.name?'rank-item-me':''}">
+      <div class="rank-pos">${i+1}º</div>
+      <div class="rank-info"><b>${p.name}</b><br><small>${p.dept}</small></div>
+      <div class="rank-score">${p.score}</div>
+    </div>
+  `).join('');
+}
+
+function continueAfterBlock(){
+  S.blockNum++;
+  showRegister();
+}
+
+function showRanking(){
+  goTo('screen-ranking');
+  const list = document.getElementById('rank-list');
+  list.innerHTML = S.ranking.length ? S.ranking.map((p,i)=>`
+    <div class="rank-item">
+      <div class="rank-pos">${i+1}º</div>
+      <div class="rank-info"><b>${p.name}</b> - ${p.dept}</div>
+      <div class="rank-score">${p.score}</div>
+    </div>
+  `).join('') : '<div class="empty-rank">Sem dados.</div>';
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('inp-dept').addEventListener('change', function(){
+    document.getElementById('field-outro').style.display = (this.value === 'Outro' ? 'block' : 'none');
+  });
+});
+</script>
