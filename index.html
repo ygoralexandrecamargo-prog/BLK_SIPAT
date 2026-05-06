@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIPAT Quiz 2026 — Balaska</title>
     <style>
-        /* SEU CSS ORIGINAL COMPLETO */
         :root {
             --navy: #040810; --navy2: #07122A; --blue: #0D3B8C; --blue2: #1450B8;
-            --gold: #1A6FE8; --amber: #0D3B8C; --green: #00E676; --red: #FF1744;
-            --white: #E8EEFF; --muted: #4D6899; --card: rgba(7,18,42,0.85);
-            --border: rgba(20,80,184,0.35); --radius: 18px;
-            --balaska-blue: #1450B8;
+            --gold: #1A6FE8; --white: #E8EEFF; --muted: #4D6899; 
+            --card: rgba(7,18,42,0.85); --border: rgba(20,80,184,0.35);
+            --radius: 18px; --balaska-blue: #1450B8;
         }
 
         *,::before,::after { margin:0; padding:0; box-sizing:border-box; }
@@ -21,7 +19,6 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* O FUNDO DE GRADE QUE VOCÊ CRIOU */
         #bg {
             position: fixed; inset: 0; z-index: -1;
             background: radial-gradient(ellipse 100% 100% at 50% 50%, #040810 35%, #000408 100%);
@@ -33,10 +30,9 @@
             background-size: 52px 52px;
         }
 
-        .screen { display: none; flex-direction: column; align-items: center; text-align: center; width: 100%; z-index: 1; }
+        .screen { display: none; flex-direction: column; align-items: center; width: 100%; z-index: 1; padding: 20px; }
         .screen.active { display: flex; }
 
-        /* TÍTULO GIGANTE DA IMAGEM */
         .big-title {
             font-family: Impact, sans-serif; font-size: clamp(80px,15vw,140px);
             line-height: .9; letter-spacing: 2px; margin-bottom: 20px;
@@ -45,85 +41,165 @@
         }
 
         .logo-ring { 
-            width: 180px; height: 80px; background: white; 
-            border-radius: 14px; display: flex; align-items: center; 
-            justify-content: center; margin-bottom: 20px; 
+            width: 180px; height: 80px; background: white; border-radius: 14px; 
+            display: flex; align-items: center; justify-content: center; margin-bottom: 20px; 
         }
         .logo-ring img { width: 90%; }
 
         .stats-row { display: flex; gap: 15px; margin-bottom: 40px; }
-        .stat { 
-            background: var(--card); border: 1px solid var(--border); 
-            padding: 15px 25px; border-radius: 14px; 
-        }
+        .stat { background: var(--card); border: 1px solid var(--border); padding: 15px 25px; border-radius: 14px; text-align: center; }
         .stat b { display: block; font-size: 35px; color: #7EB8FF; font-family: Impact; }
         .stat span { font-size: 10px; color: var(--muted); text-transform: uppercase; }
 
+        /* CARD DE IDENTIFICAÇÃO IGUAL AO SEU */
+        .q-card { 
+            background: var(--card); border: 1px solid var(--border);
+            padding: 40px; border-radius: var(--radius); width: 100%; max-width: 500px;
+            backdrop-filter: blur(10px); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .q-card h2 { font-size: 32px; margin-bottom: 30px; font-weight: 800; letter-spacing: -1px; }
+
+        input, select {
+            width: 100%; padding: 18px; margin-bottom: 15px; 
+            background: rgba(4, 8, 16, 0.6); border: 1px solid var(--border);
+            color: white; border-radius: 12px; font-size: 16px; outline: none;
+        }
+        input:focus, select:focus { border-color: var(--gold); }
+
+        #otherDeptContainer { display: none; }
+
         .btn { 
-            font-weight: 900; font-size: 18px; padding: 20px 60px; 
+            width: 100%; font-weight: 900; font-size: 18px; padding: 20px; 
             border-radius: 50px; border: none; cursor: pointer; text-transform: uppercase;
+            transition: 0.3s;
         }
         .btn-gold { 
             background: linear-gradient(135deg, var(--balaska-blue), #1A6FE8); 
-            color: white; box-shadow: 0 8px 30px rgba(20,80,184,0.5); 
+            color: white; box-shadow: 0 8px 30px rgba(20,80,184,0.4); 
         }
+        .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(20,80,184,0.6); }
 
-        /* ESTILO DOS CARDS DE PERGUNTA */
-        .q-card { 
-            background: var(--card); border: 1px solid var(--border);
-            padding: 40px; border-radius: var(--radius); width: 90%; max-width: 600px;
-        }
-        input, select {
-            width: 100%; padding: 15px; margin: 10px 0; 
-            background: #0d1a35; border: 1px solid var(--border);
-            color: white; border-radius: 10px;
-        }
+        /* ESTILO OPÇÕES DO QUIZ */
+        .opts { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; max-width: 600px; margin-top: 20px; }
+        .opt-btn { background: var(--card); border: 1px solid var(--border); padding: 18px; border-radius: 12px; color: white; cursor: pointer; text-align: left; font-size: 16px; }
+        .opt-btn:hover { background: var(--blue); }
     </style>
 </head>
 <body>
 
 <div id="bg"></div>
 
-<!-- TELA INICIAL (IGUAL À FOTO) -->
+<!-- TELA 1: INÍCIO -->
 <div id="screen-start" class="screen active">
-    <div class="logo-ring">
-        <img src="https://balaska.com.br/wp-content/uploads/2022/01/logo-balaska.png" alt="Balaska">
-    </div>
+    <div class="logo-ring"><img src="https://balaska.com.br/wp-content/uploads/2022/01/logo-balaska.png"></div>
     <div class="big-title">QUIZ</div>
     <div class="stats-row">
-        <div class="stat"><b>50</b><span>Perguntas</span></div>
-        <div class="stat"><b>10</b><span>Grupos</span></div>
+        <div class="stat"><b>07</b><span>Perguntas</span></div>
+        <div class="stat"><b>SIPAT</b><span>2026</span></div>
     </div>
-    <button class="btn btn-gold" onclick="next('screen-register')">▶ JOGAR AGORA</button>
+    <button class="btn btn-gold" style="max-width:300px" onclick="nav('screen-register')">▶ JOGAR AGORA</button>
 </div>
 
-<!-- TELA DE REGISTRO -->
+<!-- TELA 2: IDENTIFICAÇÃO (COMO A SUA IMAGEM) -->
 <div id="screen-register" class="screen">
     <div class="q-card">
-        <h2 style="margin-bottom:20px">Identifique-se</h2>
-        <input type="text" id="pName" placeholder="Seu Nome Completo">
-        <select id="pDept">
+        <h2>Identifique-se</h2>
+        <input type="text" id="userName" placeholder="Seu Nome Completo">
+        
+        <select id="userDept" onchange="checkDept(this.value)">
             <option value="">Selecione seu Setor</option>
-            <option>Produção</option>
-            <option>Logística</option>
-            <option>Vendas</option>
-            <option>Administrativo</option>
+            <option value="Produção">Produção</option>
+            <option value="Logística">Logística</option>
+            <option value="Vendas">Vendas</option>
+            <option value="Administrativo">Administrativo</option>
+            <option value="Financeiro">Financeiro</option>
+            <option value="RH">RH</option>
+            <option value="Outros">Outros (Digitar)</option>
         </select>
-        <button class="btn btn-gold" style="margin-top:20px" onclick="start()">INICIAR</button>
+
+        <div id="otherDeptContainer">
+            <input type="text" id="customDept" placeholder="Qual seu setor?">
+        </div>
+
+        <button class="btn btn-gold" onclick="startQuiz()">INICIAR QUIZ</button>
     </div>
+</div>
+
+<!-- TELA 3: O JOGO -->
+<div id="screen-game" class="screen">
+    <div class="q-card">
+        <p id="q-count" style="color:var(--muted); font-size:12px; margin-bottom:10px">PERGUNTA 1 DE 7</p>
+        <h3 id="questionText">Carregando pergunta...</h3>
+    </div>
+    <div id="optionsContainer" class="opts"></div>
 </div>
 
 <script>
-    function next(id) {
+    // Configurações do Quiz
+    const questions = [
+        { q: "Qual o uso correto do capacete de segurança?", options: ["Sempre com a jugular ajustada", "Apenas colocado sobre a cabeça", "Virado para trás", "Pendurado no braço"], correct: 0 },
+        { q: "O que significa a sigla SIPAT?", options: ["Semana Interna de Prevenção de Acidentes do Trabalho", "Sistema Integrado de Proteção ao Trabalhador", "Sinalização Interna de Perigos e Acidentes", "Socorro Imediato para Acidentes Totais"], correct: 0 },
+        { q: "Quem deve utilizar os EPIs?", options: ["Apenas os novos funcionários", "Apenas em visitas técnicas", "Todos os colaboradores conforme o risco da função", "Somente quando o chefe estiver olhando"], correct: 2 },
+        { q: "Qual a função da CIPA?", options: ["Organizar festas", "Prevenir acidentes e doenças no trabalho", "Controlar o horário de entrada", "Vender equipamentos de proteção"], correct: 1 },
+        { q: "O que fazer ao notar um fio desencapado?", options: ["Tentar consertar sozinho", "Ignorar se não estiver atrapalhando", "Isolar a área e avisar a manutenção imediatamente", "Jogar água para limpar"], correct: 2 },
+        { q: "Qual o descarte correto para luvas contaminadas?", options: ["Lixo comum", "Lixo reciclável (papel)", "Coletor específico de resíduos perigosos", "Pode levar para casa"], correct: 2 },
+        { q: "A segurança do trabalho é responsabilidade de quem?", options: ["Apenas do Técnico de Segurança", "Apenas do Diretor", "De todos os colaboradores", "Somente do Governo"], correct: 2 }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let player = { name: "", dept: "" };
+
+    function nav(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 
-    function start() {
-        const name = document.getElementById('pName').value;
-        if(!name) return alert("Por favor, digite seu nome.");
-        alert("Iniciando o Quiz para: " + name);
-        // Aqui entra a lógica das perguntas que configuramos antes
+    function checkDept(val) {
+        document.getElementById('otherDeptContainer').style.display = (val === "Outros") ? "block" : "none";
+    }
+
+    function startQuiz() {
+        const name = document.getElementById('userName').value;
+        const deptSelect = document.getElementById('userDept').value;
+        const customDept = document.getElementById('customDept').value;
+
+        if(!name || !deptSelect) return alert("Preencha seu nome e setor!");
+        
+        player.name = name;
+        player.dept = (deptSelect === "Outros") ? customDept : deptSelect;
+
+        nav('screen-game');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const q = questions[currentQ];
+        document.getElementById('q-count').innerText = `PERGUNTA ${currentQ + 1} DE ${questions.length}`;
+        document.getElementById('questionText').innerText = q.q;
+        
+        const container = document.getElementById('optionsContainer');
+        container.innerHTML = "";
+
+        q.options.forEach((opt, i) => {
+            const b = document.createElement('button');
+            b.className = 'opt-btn';
+            b.innerText = opt;
+            b.onclick = () => handleAnswer(i);
+            container.appendChild(b);
+        });
+    }
+
+    function handleAnswer(idx) {
+        if(idx === questions[currentQ].correct) score += 100;
+
+        currentQ++;
+        if(currentQ < questions.length) {
+            showQuestion();
+        } else {
+            alert(`Parabéns ${player.name}!\nVocê terminou o quiz com ${score} pontos.`);
+            location.reload(); // Volta ao início
+        }
     }
 </script>
 
