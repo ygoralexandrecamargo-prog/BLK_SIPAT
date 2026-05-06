@@ -880,11 +880,12 @@ function carregarRanking() {
       const medals = ['🥇','🥈','🥉'];
       const posClasses = ['p1','p2','p3'];
 
-      snap.forEach((doc, i) => {
+      let i = 0;
+      snap.forEach(doc => {
         const d = doc.data();
         const posClass = i < 3 ? posClasses[i] : 'pN';
         const medal = i < 3 ? medals[i] : '🔹';
-        const hits = d.acertos !== undefined ? `${d.acertos}/${d.total || 5} acertos` : '';
+        const hits = d.acertos !== undefined ? `${d.acertos}/${d.total || 6} acertos` : '';
 
         lista.innerHTML += `
           <div class="rank-item">
@@ -899,6 +900,7 @@ function carregarRanking() {
               <div class="rank-hits">${hits}</div>
             </div>
           </div>`;
+        i++;
       });
 
       // Atualizar hora da última atualização
@@ -912,4 +914,4 @@ function carregarRanking() {
 }
 </script>
 </body>
-  </html>
+</html>
