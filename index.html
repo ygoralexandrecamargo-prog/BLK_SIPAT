@@ -430,7 +430,7 @@ body { font-weight: 400; }
   <div class="big-sub au3">Segurança do Trabalho</div>
   <div class="stats-row au4">
     <div class="stat"><b>50</b><span>Perguntas</span></div>
-    <div class="stat"><b>5</b><span>Por Rodada</span></div>
+    <div class="stat"><b>6</b><span>Por Rodada</span></div>
     <div class="stat"><b>4</b><span>Alternativas</span></div>
     <div class="stat"><b>🔀</b><span>Aleatório</span></div>
   </div>
@@ -497,7 +497,7 @@ body { font-weight: 400; }
       </div>
     </div>
     <div class="gh-progress">
-      <div class="gh-plabel" id="gh-plabel">Pergunta 1 de 5</div>
+      <div class="gh-plabel" id="gh-plabel">Pergunta 1 de 6</div>
       <div class="prog-track"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
     </div>
     <div class="gh-score">
@@ -524,7 +524,7 @@ body { font-weight: 400; }
     <div class="res-name" id="res-name">—</div>
     <div class="res-big" id="res-big">0</div>
     <div class="res-pts-label">pontos</div>
-    <div class="res-acertos" id="res-acertos">— acertos de 5 perguntas</div>
+    <div class="res-acertos" id="res-acertos">— acertos de 6 perguntas</div>
     <div class="res-track"><div class="res-bar" id="res-bar"></div></div>
     <div class="res-msg" id="res-msg">—</div>
     <div class="btn-stack">
@@ -673,8 +673,18 @@ function startGame() {
   acertos = 0;
   qAtual = 0;
 
-  // Sortear 5 perguntas aleatórias do banco de 50
-  questoesRodada = sortear(BANCO, 5);
+  // Sortear 6 perguntas aleatórias do banco de 50 com opções embaralhadas
+  questoesRodada = sortear(BANCO, 6).map(p => {
+    // Embaralhar opções mantendo a resposta correta rastreada
+    const indices = p.o.map((_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    const novasOpcoes = indices.map(i => p.o[i]);
+    const novaCorreta = indices.indexOf(p.a);
+    return { q: p.q, o: novasOpcoes, a: novaCorreta };
+  });
 
   // Mostrar tela "próximo participante" com countdown
   document.getElementById('next-name').textContent = nome;
@@ -762,7 +772,7 @@ function responder(escolha, correta, btnClicado, optsDiv) {
 
   if (acertou) {
     btnClicado.classList.add('correct');
-    pontos += 100;
+    pontos += 10;
     acertos++;
     document.getElementById('gh-score').textContent = pontos;
     showFeedback(true);
@@ -902,4 +912,4 @@ function carregarRanking() {
 }
 </script>
 </body>
-</html>
+  </html>
