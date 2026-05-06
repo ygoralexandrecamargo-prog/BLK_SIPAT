@@ -1,203 +1,905 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIPAT Quiz 2026 — Balaska Equipamentos</title>
-    <!-- O CSS permanece o mesmo que você enviou para manter o layout idêntico -->
-    <style>
-        /* [Seu CSS completo aqui - Mantive exatamente como você enviou] */
-        :root { --navy: #040810; --navy2: #07122A; --blue: #0D3B8C; --blue2: #1450B8; --gold: #1A6FE8; --amber: #0D3B8C; --green: #00E676; --red: #FF1744; --white: #E8EEFF; --muted: #4D6899; --card: rgba(7,18,42,0.85); --border: rgba(20,80,184,0.35); --radius: 18px; --glow-g: 0 0 28px rgba(0,230,118,0.45); --glow-r: 0 0 28px rgba(255,23,68,0.45); --balaska-blue: #1450B8; }
-        *,::before,::after { margin:0; padding:0; box-sizing:border-box; }
-        html, body { width:100%; height:100%; overflow:hidden; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--navy); color: var(--white); display: flex; align-items: center; justify-content: center; }
-        #bg { position: fixed; inset: 0; z-index: 0; background: radial-gradient(ellipse 80% 60% at 15% 20%, rgba(13,59,140,0.4) 0%, transparent 55%), radial-gradient(ellipse 60% 80% at 85% 75%, rgba(20,80,184,0.15) 0%, transparent 50%), radial-gradient(ellipse 100% 100% at 50% 50%, #040810 35%, #000408 100%); }
-        #bg::after { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(20,80,184,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(20,80,184,0.06) 1px, transparent 1px); background-size: 52px 52px; }
-        .orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; animation: orbDrift 18s ease-in-out infinite alternate; }
-        .orb1 { width:500px; height:500px; background:rgba(13,59,140,0.22); top:-10%; left:-5%; }
-        .orb2 { width:400px; height:400px; background:rgba(20,80,184,0.12); bottom:-5%; right:-5%; animation-delay:-9s; }
-        @keyframes orbDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(40px,30px) scale(1.08); } }
-        .screen { position: relative; z-index: 1; display: none; width: 100vw; height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 24px; overflow: hidden; }
-        .screen.active { display: flex; }
-        .big-title { font-family: Impact; font-size: clamp(80px,13vw,140px); line-height: .9; background: linear-gradient(135deg,#ffffff 0%,#7EB8FF 45%,var(--balaska-blue) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 5s linear infinite; }
-        @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
-        .btn { font-family: 'Segoe UI'; font-weight: 900; font-size: 18px; letter-spacing: 3px; text-transform: uppercase; border: none; border-radius: 50px; cursor: pointer; padding: 18px 60px; transition: transform .15s; }
-        .btn-gold { background: linear-gradient(135deg,var(--balaska-blue),#1A6FE8); color: #ffffff; box-shadow: 0 8px 30px rgba(20,80,184,0.5); }
-        .glass-card { background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; padding: 44px 40px; width: min(460px,90vw); }
-        .field input, .field select { width: 100%; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 16px; color: white; margin-bottom: 15px; }
-        /* [Omiti o restante do CSS por brevidade, mas ele deve estar presente no seu arquivo final] */
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIPAT Quiz 2026 — Balaska Equipamentos</title>
+<style>
+:root {
+  --navy:   #040810;
+  --navy2:  #07122A;
+  --blue:   #0D3B8C;
+  --blue2:  #1450B8;
+  --gold:   #1A6FE8;
+  --amber:  #0D3B8C;
+  --green:  #00E676;
+  --red:    #FF1744;
+  --white:  #E8EEFF;
+  --muted:  #4D6899;
+  --card:   rgba(7,18,42,0.85);
+  --border: rgba(20,80,184,0.35);
+  --radius: 18px;
+  --glow-g: 0 0 28px rgba(0,230,118,0.45);
+  --glow-r: 0 0 28px rgba(255,23,68,0.45);
+  --glow-y: 0 0 28px rgba(20,80,184,0.5);
+  --balaska-blue: #1450B8;
+  --balaska-dark: #07122A;
+  --accent: #FFFFFF;
+}
+
+*,::before,::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; }
+body {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+}
+
+#bg {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, rgba(13,59,140,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 80% at 85% 75%, rgba(20,80,184,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, #040810 35%, #000408 100%);
+}
+#bg::after {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(20,80,184,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,80,184,0.06) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+.orb {
+  position: fixed; border-radius: 50%; filter: blur(90px);
+  pointer-events: none; z-index: 0; animation: orbDrift 18s ease-in-out infinite alternate;
+}
+.orb1 { width:500px; height:500px; background:rgba(13,59,140,0.22); top:-10%; left:-5%; }
+.orb2 { width:400px; height:400px; background:rgba(20,80,184,0.12); bottom:-5%; right:-5%; animation-delay:-9s; }
+@keyframes orbDrift {
+  0%   { transform: translate(0,0) scale(1); }
+  100% { transform: translate(40px,30px) scale(1.08); }
+}
+
+.screen {
+  position: relative; z-index: 1;
+  display: none; width: 100vw; height: 100vh;
+  flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px; overflow: hidden;
+}
+.screen.active { display: flex; }
+
+@keyframes fadeUp   { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+@keyframes scaleIn  { from{opacity:0;transform:scale(.7)} to{opacity:1;transform:scale(1)} }
+@keyframes pulse    { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+@keyframes shimmer  {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+@keyframes correctBurst {
+  0%   { box-shadow: 0 0 0 0   rgba(0,230,118,0); }
+  50%  { box-shadow: 0 0 0 20px rgba(0,230,118,0.25); }
+  100% { box-shadow: 0 0 0 40px rgba(0,230,118,0); }
+}
+@keyframes wrongBurst {
+  0%   { box-shadow: 0 0 0 0   rgba(255,23,68,0); }
+  50%  { box-shadow: 0 0 0 20px rgba(255,23,68,0.25); }
+  100% { box-shadow: 0 0 0 40px rgba(255,23,68,0); }
+}
+@keyframes countIn  { from{transform:scale(2.5);opacity:0} to{transform:scale(1);opacity:1} }
+@keyframes rankSlide{ from{opacity:0;transform:translateX(-50px)} to{opacity:1;transform:translateX(0)} }
+@keyframes trophy {
+  0%   { transform: rotate(-10deg) scale(0.5); opacity:0; }
+  60%  { transform: rotate(6deg) scale(1.2);   opacity:1; }
+  100% { transform: rotate(0deg) scale(1);     opacity:1; }
+}
+@keyframes scoreCount { from{transform:scale(1.5);color:var(--gold)} to{transform:scale(1)} }
+
+.au1{animation:fadeUp .5s .05s both}
+.au2{animation:fadeUp .5s .15s both}
+.au3{animation:fadeUp .5s .25s both}
+.au4{animation:fadeUp .5s .35s both}
+.au5{animation:fadeUp .5s .45s both}
+.au6{animation:fadeUp .5s .55s both}
+
+.logo-ring {
+  width:180px; height:80px; border-radius:14px;
+  background: white;
+  box-shadow: 0 0 0 3px var(--balaska-blue), 0 0 24px rgba(20,80,184,0.4);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+  animation: pulse 3.5s ease-in-out infinite;
+}
+.logo-ring img { width:92%; height:92%; object-fit:contain; }
+.logo-ring .logo-emoji { font-size: 42px; }
+
+#screen-start .brand {
+  font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+  font-size: clamp(15px,2vw,20px);
+  letter-spacing: 5px; color: #ffffff;
+  text-transform: uppercase; margin-top: 14px;
+}
+#screen-start .badge {
+  background: linear-gradient(90deg,var(--balaska-blue),var(--navy2));
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 11px; letter-spacing: 3px; color: #ffffff;
+  padding: 4px 18px; border-radius: 20px; margin: 6px 0 20px;
+  font-weight: 700; text-transform: uppercase;
+}
+.big-title {
+  font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+  font-size: clamp(80px,13vw,140px);
+  line-height: .9; letter-spacing: 2px !important;
+  background: linear-gradient(135deg,#ffffff 0%,#7EB8FF 45%,var(--balaska-blue) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: shimmer 5s linear infinite, fadeUp .7s .1s both;
+}
+.big-sub {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; font-weight: 900;
+  font-size: clamp(13px,1.8vw,17px); letter-spacing: 7px;
+  color: var(--muted); text-transform: uppercase; margin: 6px 0 32px;
+}
+.stats-row { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-bottom:36px; }
+.stat {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 22px; text-align: center;
+  backdrop-filter: blur(12px);
+}
+.stat b {
+  display: block; font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+  font-size: 38px; color: #7EB8FF; line-height: 1;
+}
+.stat span { font-size:10px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; }
+
+.btn {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; font-weight: 900;
+  font-size: 18px; letter-spacing: 2px !important; text-transform: uppercase;
+  border: none; border-radius: 50px; cursor: pointer;
+  padding: 18px 60px; transition: transform .15s, box-shadow .15s;
+}
+.btn:hover  { transform: translateY(-2px) scale(1.04); }
+.btn:active { transform: scale(.97); }
+.btn-gold {
+  background: linear-gradient(135deg,var(--balaska-blue),#1A6FE8);
+  color: #ffffff; box-shadow: 0 8px 30px rgba(20,80,184,0.5);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.btn-blue {
+  background: linear-gradient(135deg,var(--blue),var(--blue2));
+  color: white; box-shadow: 0 8px 30px rgba(17,85,204,0.4);
+}
+.btn-ghost {
+  background: transparent; color: var(--muted);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 12px 36px; font-size: 14px; letter-spacing: 2px;
+}
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
+
+.glass-card {
+  background: var(--card); backdrop-filter: blur(16px);
+  border: 1px solid var(--border); border-radius: 24px;
+  padding: 44px 40px; width: min(460px,90vw);
+  animation: scaleIn .4s both;
+}
+.card-icon  { font-size:52px; margin-bottom:12px; display:block; text-align:center; }
+.card-title {
+  font-family: Impact, 'Arial Narrow', Arial, sans-serif; font-size: 38px;
+  color: #7EB8FF; text-align: center; margin-bottom: 6px; letter-spacing: 0px !important;
+}
+.card-sub   { color:var(--muted); font-size:14px; text-align:center; margin-bottom:28px; }
+.field      { margin-bottom: 16px; }
+#field-outro{ animation: fadeUp .3s both; }
+.field label {
+  display: block; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 7px;
+}
+.field input, .field select {
+  width: 100%; background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 14px 16px;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; font-size: 15px;
+  color: var(--white); outline: none; transition: border-color .2s;
+}
+.field input:focus, .field select:focus { border-color: #5BA3FF; }
+.field select option { background: #0D2255; }
+
+#screen-next { background: transparent; }
+.next-label {
+  font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+  font-size: clamp(22px,3vw,28px); letter-spacing: 6px;
+  color: var(--muted); margin-bottom: 16px;
+  animation: fadeIn .4s both;
+}
+.next-name {
+  font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+  font-size: clamp(54px,9vw,96px);
+  color: #7EB8FF; letter-spacing: 0px !important;
+  animation: countIn .5s both;
+  text-shadow: 0 0 28px rgba(20,80,184,0.6);
+  text-align: center;
+}
+.next-dept {
+  font-size: 16px; letter-spacing: 3px; color: var(--muted);
+  text-transform: uppercase; margin-top: 8px;
+  animation: fadeUp .4s .2s both;
+}
+.countdown-ring {
+  width: 90px; height: 90px; margin-top: 36px;
+  animation: fadeIn .3s .3s both;
+}
+.countdown-ring circle {
+  fill: none; stroke-width: 5; stroke-linecap: round;
+  transform: rotate(-90deg); transform-origin: 50% 50%;
+}
+.ring-bg   { stroke: rgba(255,255,255,0.08); }
+.ring-fill { stroke: #5BA3FF; stroke-dasharray: 220; stroke-dashoffset: 0; transition: stroke-dashoffset .05s linear; }
+.cd-num {
+  font-family: Impact, 'Arial Narrow', Arial, sans-serif; font-size: 32px;
+  fill: var(--white); dominant-baseline: middle; text-anchor: middle;
+}
+
+#screen-game { padding:0; justify-content:flex-start; overflow-y:auto; }
+.game-header {
+  width: 100%; background: rgba(6,12,30,.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 2px solid rgba(255,214,0,0.15);
+  padding: 12px 28px;
+  display: flex; align-items: center; gap: 16px;
+  position: sticky; top: 0; z-index: 20; flex-shrink: 0;
+}
+.gh-player  { display:flex; align-items:center; gap:10px; min-width:180px; }
+.gh-avatar  {
+  width:40px; height:40px; border-radius:50%;
+  background: linear-gradient(135deg,var(--blue),var(--gold));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.gh-name    { font-weight:700; font-size:16px; line-height:1.2; }
+.gh-dept    { font-size:11px; color:var(--muted); }
+.gh-progress{ flex:1; text-align:center; }
+.gh-plabel  { font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; }
+.prog-track { height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden; }
+.prog-bar   { height:100%; background:linear-gradient(90deg,var(--balaska-blue),#5BA3FF); border-radius:3px; transition:width .6s ease; }
+.gh-score   {
+  background: rgba(7,18,42,0.9); border: 1px solid rgba(20,80,184,0.45);
+  border-radius: 12px; padding: 6px 18px; text-align: center; flex-shrink: 0;
+}
+.gh-score-num { font-family:Impact, 'Arial Narrow', Arial, sans-serif; font-size:26px; color:#7EB8FF; line-height:1; }
+.gh-score-lbl { font-size:9px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+
+.game-body {
+  flex: 1; width: 100%; max-width: 820px; margin: 0 auto;
+  padding: 28px 20px 20px;
+  display: flex; flex-direction: column; align-items: center;
+}
+
+.q-meta   { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.q-num    { font-family:Impact, 'Arial Narrow', Arial, sans-serif; font-size:15px; color:var(--muted); letter-spacing:2px; }
+
+.q-card {
+  background: var(--card); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius); padding: 30px 32px;
+  width: 100%; margin-bottom: 20px;
+  animation: fadeUp .35s both;
+}
+.q-text { font-size:clamp(18px,2.5vw,23px); font-weight:700; line-height:1.35; color:var(--white); }
+
+.opts { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+@media(max-width:560px){ .opts { grid-template-columns:1fr; } }
+
+.opt {
+  background: var(--card); backdrop-filter: blur(8px);
+  border: 2px solid rgba(255,255,255,0.07);
+  border-radius: 14px; padding: 16px 20px;
+  cursor: pointer; transition: border-color .15s, background .15s, transform .12s;
+  display: flex; align-items: center; gap: 14px;
+  text-align: left; font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px; color: var(--white);
+  animation: fadeUp .35s both;
+}
+.opt:nth-child(1){ animation-delay:.04s }
+.opt:nth-child(2){ animation-delay:.08s }
+.opt:nth-child(3){ animation-delay:.12s }
+.opt:nth-child(4){ animation-delay:.16s }
+.opt:hover:not(:disabled) {
+  border-color: #5BA3FF; background: rgba(20,80,184,0.1); transform: translateY(-2px);
+}
+.opt:disabled { cursor: default; }
+.opt-letter {
+  width:34px; height:34px; border-radius:9px;
+  background: rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-family: Impact, 'Arial Narrow', Arial, sans-serif; font-size: 18px; flex-shrink: 0;
+  transition: background .15s;
+}
+.opt.correct              { border-color:var(--green); background:rgba(0,230,118,0.1); animation:correctBurst .5s ease; }
+.opt.correct .opt-letter  { background:var(--green); color:var(--navy); }
+.opt.wrong                { border-color:var(--red);   background:rgba(255,23,68,0.1);  animation:wrongBurst .5s ease; }
+.opt.wrong .opt-letter    { background:var(--red); color:#fff; }
+.opt.reveal-correct       { border-color:var(--green); background:rgba(0,230,118,0.06); }
+.opt.reveal-correct .opt-letter { background:var(--green); color:var(--navy); }
+
+#feedback-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  pointer-events: none; opacity: 0; transition: opacity .2s;
+}
+#feedback-overlay.show        { display:flex; opacity:1; }
+.fb-emoji { font-size:110px; animation:scaleIn .35s both; display:block; }
+.fb-word  {
+  font-family: Impact, 'Arial Narrow', Arial, sans-serif; font-size: clamp(48px,8vw,80px);
+  letter-spacing: 4px; margin-top: 8px;
+  animation: fadeUp .3s .1s both;
+}
+#feedback-overlay.fb-correct           { background: rgba(0,230,118,0.12); }
+#feedback-overlay.fb-wrong             { background: rgba(255,23,68,0.12); }
+#feedback-overlay.fb-correct .fb-word { color:var(--green); text-shadow:var(--glow-g); }
+#feedback-overlay.fb-wrong   .fb-word { color:var(--red);   text-shadow:var(--glow-r); }
+
+.result-card {
+  background: var(--card); backdrop-filter: blur(18px);
+  border: 1px solid var(--border); border-radius: 28px;
+  padding: 48px 40px; width: min(500px,90vw); text-align: center;
+  animation: scaleIn .5s both;
+}
+.res-trophy   { font-size:72px; display:block; margin-bottom:8px; animation:trophy .6s both; }
+.res-name     { font-family:Impact, 'Arial Narrow', Arial, sans-serif; font-size:32px; color:#7EB8FF; margin-bottom:2px; }
+.res-big {
+  font-family: Impact, 'Arial Narrow', Arial, sans-serif; font-size: 90px; line-height: 1;
+  letter-spacing: 0px !important;
+  background: linear-gradient(135deg,#ffffff,#7EB8FF);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: scoreCount .6s both;
+}
+.res-pts-label{ font-size:12px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
+.res-acertos  { color:var(--muted); font-size:14px; margin-bottom:20px; }
+.res-track    { background:rgba(255,255,255,0.06); border-radius:8px; height:10px; margin-bottom:24px; overflow:hidden; }
+.res-bar      { height:100%; background:linear-gradient(90deg,var(--balaska-blue),#5BA3FF); border-radius:8px; transition:width 1.3s ease; width:0%; }
+.res-msg      { font-size:20px; margin-bottom:28px; }
+.btn-stack    { display:flex; flex-direction:column; gap:10px; }
+
+#screen-ranking { overflow-y:auto; justify-content:flex-start; padding-top:40px; }
+.rank-header    { text-align:center; margin-bottom:32px; }
+.rank-title {
+  font-family: Impact, 'Arial Narrow', Arial, sans-serif; font-size: clamp(56px,9vw,80px);
+  letter-spacing: 2px !important; line-height: 1;
+  background: linear-gradient(135deg,#ffffff,#7EB8FF);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.rank-sub  { font-size:12px; color:var(--muted); letter-spacing:3px; text-transform:uppercase; margin-top:4px; }
+.rank-list { width:min(600px,90vw); }
+.rank-item {
+  background: var(--card); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px; padding: 18px 22px;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 10px;
+  animation: rankSlide .4s both;
+}
+.rank-item:nth-child(1)  { border-color:rgba(91,163,255,0.4); background:rgba(20,80,184,0.1); animation-delay:.05s; }
+.rank-item:nth-child(2)  { border-color:rgba(192,192,192,0.25); animation-delay:.1s; }
+.rank-item:nth-child(3)  { border-color:rgba(205,127,50,0.25);  animation-delay:.15s; }
+.rank-item:nth-child(n+4){ animation-delay:.2s; }
+.rank-pos   { font-family:Impact, 'Arial Narrow', Arial, sans-serif; font-size:28px; width:40px; text-align:center; flex-shrink:0; }
+.rank-pos.p1{ color:#7EB8FF; text-shadow:0 0 20px rgba(91,163,255,0.6); }
+.rank-pos.p2{ color:#C0C0C0; }
+.rank-pos.p3{ color:#CD7F32; }
+.rank-pos.pN{ color:var(--muted); }
+.rank-medal { font-size:26px; flex-shrink:0; }
+.rank-info  { flex:1; }
+.rank-name  { font-weight:700; font-size:17px; }
+.rank-dept  { font-size:12px; color:var(--muted); margin-top:2px; }
+.rank-right { text-align:right; }
+.rank-score { font-family:Impact, 'Arial Narrow', Arial, sans-serif; font-size:32px; color:#7EB8FF; line-height:1; }
+.rank-hits  { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.empty-rank { color:var(--muted); text-align:center; padding:60px 20px; font-size:18px; line-height:1.8; }
+.rank-refresh { font-size:11px; color:var(--muted); text-align:center; margin-bottom:16px; letter-spacing:1px; }
+
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(20,80,184,0.5); border-radius: 3px; }
+body { font-weight: 400; }
+</style>
 </head>
+
 <body>
-    <div id="bg"></div>
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
+<div id="bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
 
-    <!-- FEEDBACK OVERLAY (Aparece ao acertar/errar) -->
-    <div id="feedback-overlay">
-        <span class="fb-emoji" id="fb-emoji"></span>
-        <div class="fb-word" id="fb-word"></div>
+<!-- FEEDBACK OVERLAY -->
+<div id="feedback-overlay">
+  <span class="fb-emoji" id="fb-emoji">✅</span>
+  <div class="fb-word" id="fb-word">CORRETO!</div>
+</div>
+
+<!-- ===================== START ===================== -->
+<div id="screen-start" class="screen active">
+  <div class="logo-ring au1">
+    <img src="logo-balaska.png" alt="Logotipo Balaska"
+         onerror="this.style.display='none'; this.parentNode.innerHTML='<span class=logo-emoji>🏭</span>'">
+  </div>
+  <div class="brand au2">Balaska Equipamentos</div>
+  <div class="badge au2">✦ SIPAT 2026 ✦</div>
+  <div class="big-title">QUIZ</div>
+  <div class="big-sub au3">Segurança do Trabalho</div>
+  <div class="stats-row au4">
+    <div class="stat"><b>50</b><span>Perguntas</span></div>
+    <div class="stat"><b>5</b><span>Por Rodada</span></div>
+    <div class="stat"><b>4</b><span>Alternativas</span></div>
+    <div class="stat"><b>🔀</b><span>Aleatório</span></div>
+  </div>
+  <button class="btn btn-gold au5" onclick="showRegister()">▶ JOGAR AGORA</button>
+  <button class="btn btn-ghost au6" onclick="showRanking()" style="margin-top:12px">🏆 VER RANKING</button>
+</div>
+
+<!-- ===================== REGISTER ===================== -->
+<div id="screen-register" class="screen">
+  <div class="glass-card">
+    <span class="card-icon">🦺</span>
+    <div class="card-title">Quem é você?</div>
+    <div class="card-sub">Cadastre-se para entrar no ranking da SIPAT!</div>
+    <div class="field">
+      <label for="inp-name">Nome completo</label>
+      <input id="inp-name" type="text" placeholder="Ex: João da Silva" maxlength="40" autocomplete="off">
     </div>
+    <div class="field">
+      <label for="inp-dept">Setor / Departamento</label>
+      <select id="inp-dept">
+        <option value="">Selecione seu setor...</option>
+        <option>Produção</option>
+        <option>Manutenção</option>
+        <option>Logística</option>
+        <option>Administrativo</option>
+        <option>Qualidade</option>
+        <option>Segurança do Trabalho</option>
+        <option>RH</option>
+        <option>TI</option>
+        <option>Vendas</option>
+        <option>Compras</option>
+        <option>Outro</option>
+      </select>
+    </div>
+    <div class="field" id="field-outro" style="display:none">
+      <label for="inp-outro">Qual é o seu setor?</label>
+      <input id="inp-outro" type="text" placeholder="Digite o nome do seu setor..." maxlength="40" autocomplete="off">
+    </div>
+    <button class="btn btn-gold" style="width:100%;margin-top:4px" onclick="startGame()">COMEÇAR! 🚀</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="goTo('screen-start')">← Voltar</button>
+  </div>
+</div>
 
-    <!-- TELAS (START, REGISTER, NEXT, GAME, RESULT, RANKING, BLOCK) -->
-    <!-- [Mantenha a estrutura HTML das telas que você enviou] -->
-    <!-- Vou focar na lógica do Script que faz seu layout funcionar agora -->
+<!-- ===================== NEXT PLAYER ===================== -->
+<div id="screen-next" class="screen">
+  <div class="next-label">PRÓXIMO PARTICIPANTE</div>
+  <div class="next-name" id="next-name">—</div>
+  <div class="next-dept" id="next-dept">—</div>
+  <svg class="countdown-ring" viewBox="0 0 90 90">
+    <circle class="ring-bg"   cx="45" cy="45" r="35"/>
+    <circle class="ring-fill" cx="45" cy="45" r="35" id="ring-fill"/>
+    <text class="cd-num" x="45" y="45" id="cd-num">3</text>
+  </svg>
+</div>
 
-    <script>
-        // CONFIGURAÇÃO DO QUIZ
-        const questions = [
-            { q: "Qual o EPI indispensável para proteção auricular?", opts: ["Protetor tipo concha", "Luva de látex", "Capacete", "Óculos"], ans: 0, hint: "É usado nas orelhas.", cat: "EPI", diff: "Fácil" },
-            { q: "O que significa a sigla SIPAT?", opts: ["Sempre Importante Prevenir Acidentes", "Semana Interna de Prevenção de Acidentes", "Sistema de Integração e Prevenção", "Segurança Interna de Proteção"], ans: 1, hint: "É um evento anual obrigatório.", cat: "Normas", diff: "Médio" }
-            // Adicione as 50 perguntas aqui...
-        ];
+<!-- ===================== GAME ===================== -->
+<div id="screen-game" class="screen">
+  <div class="game-header">
+    <div class="gh-player">
+      <div class="gh-avatar">👷</div>
+      <div>
+        <div class="gh-name" id="gh-name">—</div>
+        <div class="gh-dept" id="gh-dept">—</div>
+      </div>
+    </div>
+    <div class="gh-progress">
+      <div class="gh-plabel" id="gh-plabel">Pergunta 1 de 5</div>
+      <div class="prog-track"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+    </div>
+    <div class="gh-score">
+      <div class="gh-score-num" id="gh-score">0</div>
+      <div class="gh-score-lbl">pontos</div>
+    </div>
+  </div>
 
-        let currentUser = { name: "", dept: "", score: 0, hits: 0 };
-        let currentQIndex = 0;
-        const totalQuestions = 7; // Perguntas por rodada
+  <div class="game-body">
+    <div class="q-meta">
+      <div class="q-num" id="q-num">PERGUNTA 1 DE 5</div>
+    </div>
+    <div class="q-card">
+      <div class="q-text" id="q-text">Carregando...</div>
+    </div>
+    <div class="opts" id="opts"></div>
+  </div>
+</div>
 
-        function goTo(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
+<!-- ===================== RESULT ===================== -->
+<div id="screen-result" class="screen">
+  <div class="result-card">
+    <span class="res-trophy" id="res-trophy">🏆</span>
+    <div class="res-name" id="res-name">—</div>
+    <div class="res-big" id="res-big">0</div>
+    <div class="res-pts-label">pontos</div>
+    <div class="res-acertos" id="res-acertos">— acertos de 5 perguntas</div>
+    <div class="res-track"><div class="res-bar" id="res-bar"></div></div>
+    <div class="res-msg" id="res-msg">—</div>
+    <div class="btn-stack">
+      <button class="btn btn-blue" onclick="showRegister()">👤 Próximo Participante</button>
+      <button class="btn btn-gold" onclick="showRanking()">🏆 Ver Ranking</button>
+      <button class="btn btn-ghost" onclick="goTo('screen-start')">🏠 Início</button>
+    </div>
+  </div>
+</div>
 
-        function showRegister() { goTo('screen-register'); }
+<!-- ===================== RANKING ===================== -->
+<div id="screen-ranking" class="screen">
+  <div class="rank-header au1">
+    <div class="logo-ring" style="width:140px;height:60px;border-radius:10px;margin:0 auto 14px;animation:none">
+      <img src="logo-balaska.png" alt="Logotipo Balaska"
+           onerror="this.style.display='none';this.parentNode.innerHTML='<span class=logo-emoji>🏭</span>'">
+    </div>
+    <div class="rank-title">RANKING</div>
+    <div class="rank-sub">✦ SIPAT 2026 — Balaska Equipamentos ✦</div>
+  </div>
+  <div class="rank-refresh" id="rank-refresh">Atualizando...</div>
+  <div class="rank-list" id="rank-list"><div class="empty-rank">Carregando...</div></div>
+  <button class="btn btn-gold" style="margin:28px 0 40px" onclick="goTo('screen-start')">🏠 Início</button>
+</div>
 
-        function startGame() {
-            const name = document.getElementById('inp-name').value;
-            const dept = document.getElementById('inp-dept').value;
-            if(!name || !dept) return alert("Preencha seus dados!");
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-            currentUser = { name, dept, score: 0, hits: 0 };
-            currentQIndex = 0;
-            
-            // Tela de Próximo Jogador com Countdown
-            document.getElementById('next-name').innerText = name;
-            document.getElementById('next-dept').innerText = dept;
-            goTo('screen-next');
-            
-            let count = 3;
-            const timer = setInterval(() => {
-                count--;
-                document.getElementById('cd-num').innerText = count;
-                if(count <= 0) {
-                    clearInterval(timer);
-                    loadQuestion();
-                    goTo('screen-game');
-                }
-            }, 1000);
-        }
+<script>
+// ============================================================
+// FIREBASE CONFIG
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBBZ-wkPE-O6xlEaY_VY_yszAvSzPqYi1g",
+  authDomain: "sipat-balaska.firebaseapp.com",
+  projectId: "sipat-balaska",
+  storageBucket: "sipat-balaska.firebasestorage.app",
+  messagingSenderId: "843068034203",
+  appId: "1:843068034203:web:5aad2089bc7b58549f8a3e"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-        function loadQuestion() {
-            const q = questions[currentQIndex];
-            document.getElementById('gh-name').innerText = currentUser.name;
-            document.getElementById('gh-dept').innerText = currentUser.dept;
-            document.getElementById('q-text').innerText = q.q;
-            document.getElementById('gh-plabel').innerText = `Pergunta ${currentQIndex + 1} de ${totalQuestions}`;
-            document.getElementById('prog-bar').style.width = `${((currentQIndex + 1) / totalQuestions) * 100}%`;
-            
-            const optsDiv = document.getElementById('opts');
-            optsDiv.innerHTML = "";
-            q.opts.forEach((opt, i) => {
-                const btn = document.createElement('button');
-                btn.className = "opt";
-                btn.innerHTML = `<div class="opt-letter">${String.fromCharCode(65 + i)}</div> <span>${opt}</span>`;
-                btn.onclick = () => checkAnswer(i);
-                optsDiv.appendChild(btn);
-            });
-            
-            document.getElementById('hint-box').style.display = "none";
-            document.getElementById('btn-hint').disabled = false;
-        }
+// ============================================================
+// BANCO DE 50 PERGUNTAS
+// ============================================================
+const BANCO = [
+  { q:"Qual EPI é obrigatório para trabalhos em altura acima de 2 metros?", o:["Luva de borracha","Cinto de segurança / trava-quedas","Óculos de proteção","Protetor auricular"], a:1 },
+  { q:"O que significa a sigla EPI?", o:["Equipamento de Proteção Individual","Equipamento de Prevenção de Incêndio","Equipamento de Procedimento Interno","Equipamento de Primeiros cuidados Internos"], a:0 },
+  { q:"Qual é a cor padrão do extintor de incêndio para CO₂ no Brasil?", o:["Vermelho","Amarelo","Verde","Cinza"], a:0 },
+  { q:"O que é a CIPA?", o:["Comitê de Inspeção de Produtos Acabados","Comissão Interna de Prevenção de Acidentes","Central de Informações de Processos Administrativos","Controle Interno de Procedimentos Administrativos"], a:1 },
+  { q:"Em caso de incêndio, qual deve ser a primeira atitude?", o:["Tentar apagar com água","Acionar o alarme e evacuar o local","Ligar para o chefe imediato","Buscar os documentos importantes"], a:1 },
+  { q:"Qual norma regulamentadora trata de Equipamentos de Proteção Individual?", o:["NR-5","NR-6","NR-10","NR-12"], a:1 },
+  { q:"Com que frequência deve ser feita a manutenção preventiva de extintores?", o:["A cada 5 anos","A cada 3 anos","Anualmente","A cada 2 anos"], a:2 },
+  { q:"O que é um APR (Análise Preliminar de Risco)?", o:["Um relatório de acidentes ocorridos","Uma técnica de identificação de riscos antes da tarefa","Um tipo de EPI para trabalho em altura","Um procedimento de evacuação de emergência"], a:1 },
+  { q:"Qual EPI é indicado para proteção contra ruído?", o:["Óculos de segurança","Máscara respiratória","Protetor auricular","Luva de raspa"], a:2 },
+  { q:"O que significa 'trabalho em espaço confinado'?", o:["Trabalho feito em escritórios pequenos","Trabalho em área fechada, com entrada restrita e não projetada para ocupação contínua","Trabalho realizado em turnos noturnos","Trabalho em área com alta temperatura"], a:1 },
+  { q:"Qual a voltagem considerada de baixa tensão no Brasil?", o:["Acima de 1000V","Até 1000V","Acima de 500V","Até 220V"], a:1 },
+  { q:"O que é o PPRA?", o:["Programa de Proteção de Recursos Ambientais","Programa de Prevenção de Riscos Ambientais","Plano de Procedimentos de Riscos de Acidentes","Projeto de Proteção e Revisão Anual"], a:1 },
+  { q:"Qual sinal indica a rota de fuga em uma edificação?", o:["Seta vermelha em fundo branco","Seta verde em fundo branco ou verde","Seta amarela em fundo preto","Seta azul em fundo branco"], a:1 },
+  { q:"Em trabalho com eletricidade, o que significa 'bloqueio e etiquetagem' (LOTO)?", o:["Procedimento para ligar equipamentos com segurança","Procedimento para garantir que equipamentos não sejam energizados durante manutenção","Técnica de instalação de novos circuitos","Método de inspeção elétrica anual"], a:1 },
+  { q:"Qual luva é indicada para manuseio de produtos químicos corrosivos?", o:["Luva de raspa de couro","Luva de nitrila ou neoprene","Luva de algodão","Luva de malha de aço"], a:1 },
+  { q:"O que é acidente de trabalho segundo a legislação brasileira?", o:["Qualquer lesão fora do ambiente de trabalho","Lesão ou doença causada pelo exercício do trabalho, a serviço da empresa","Somente acidentes com afastamento acima de 15 dias","Apenas acidentes com morte"], a:1 },
+  { q:"Qual o objetivo principal do uso de EPC (Equipamento de Proteção Coletiva)?", o:["Proteger somente o trabalhador que usa","Proteger todos os trabalhadores de uma área coletivamente","Substituir totalmente o uso de EPI","Ser usado apenas em emergências"], a:1 },
+  { q:"O que fazer ao encontrar um colega inconsciente no trabalho?", o:["Deixá-lo em repouso e continuar o trabalho","Chamar socorro, não mover a vítima e verificar sinais vitais","Dar água para que ele se recupere","Colocá-lo sentado para facilitar a respiração"], a:1 },
+  { q:"Qual NR regulamenta a segurança em máquinas e equipamentos?", o:["NR-10","NR-12","NR-15","NR-17"], a:1 },
+  { q:"O que é ergonomia no ambiente de trabalho?", o:["Estudo das normas de higiene industrial","Adaptação das condições de trabalho às características do trabalhador","Controle de temperatura no ambiente","Técnica de combate a incêndios"], a:1 },
+  { q:"Qual o prazo máximo para a empresa emitir a CAT (Comunicação de Acidente de Trabalho)?", o:["48 horas","24 horas","7 dias","30 dias"], a:1 },
+  { q:"O que significa a cor amarela na sinalização de segurança?", o:["Proibição","Obrigação","Atenção / Cuidado","Emergência"], a:2 },
+  { q:"Qual EPI é obrigatório ao trabalhar com esmerilhadeira?", o:["Apenas luva","Apenas óculos","Óculos, protetor facial e luva","Apenas protetor auricular"], a:2 },
+  { q:"O que é LER/DORT?", o:["Lesão por esforço repetitivo / Doença osteoarticular relacionada ao trabalho","Uma norma de segurança","Um tipo de EPI","Um procedimento de emergência"], a:0 },
+  { q:"Qual é o nível máximo de ruído permitido para jornada de 8 horas sem EPI?", o:["70 dB","85 dB","100 dB","60 dB"], a:1 },
+  { q:"O que é o PCMSO?", o:["Plano de Controle e Monitoramento de Segurança Operacional","Programa de Controle Médico de Saúde Ocupacional","Procedimento de Controle de Máquinas e Sistemas Operacionais","Plano de Comunicação de Manutenção e Segurança Ocupacional"], a:1 },
+  { q:"Qual a função do extintor de pó químico (ABC)?", o:["Apenas incêndios elétricos","Apenas incêndios em líquidos","Incêndios de classes A, B e C","Apenas incêndios em madeira"], a:2 },
+  { q:"O que fazer antes de iniciar uma tarefa de risco?", o:["Começar logo para não perder tempo","Realizar a Análise Preliminar de Risco e usar os EPIs adequados","Avisar apenas o supervisor e começar","Verificar apenas se tem EPI disponível"], a:1 },
+  { q:"O que significa a cor verde na sinalização de segurança?", o:["Perigo","Proibição","Segurança / primeiros socorros","Atenção"], a:2 },
+  { q:"Qual NR trata de trabalho em altura?", o:["NR-33","NR-35","NR-10","NR-12"], a:1 },
+  { q:"Em qual situação NÃO se deve usar água para apagar um incêndio?", o:["Incêndio em madeira","Incêndio em papel","Incêndio em equipamentos elétricos energizados","Incêndio em tecido"], a:2 },
+  { q:"O que é insalubridade no trabalho?", o:["Trabalho realizado em horário noturno","Exposição a agentes nocivos à saúde acima dos limites de tolerância","Trabalho realizado em local sem iluminação","Qualquer trabalho pesado fisicamente"], a:1 },
+  { q:"Para que serve o crachá de segurança em algumas empresas?", o:["Apenas para identificação pessoal","Identificação, controle de acesso e rastreamento de atividades","Substituir documentos de identidade","Apenas para fins administrativos"], a:1 },
+  { q:"Qual o primeiro passo ao detectar um vazamento de gás?", o:["Tentar vedar o vazamento com as mãos","Acender uma vela para verificar o local do vazamento","Fechar o registro, ventilar o ambiente e não acionar interruptores","Ligar o ar-condicionado para dissipar o gás"], a:2 },
+  { q:"Qual é a postura correta ao levantar cargas pesadas?", o:["Dobrar a coluna e puxar com as costas","Dobrar os joelhos, manter a coluna reta e usar a força das pernas","Inclinar o tronco para frente rapidamente","Girar o tronco enquanto levanta"], a:1 },
+  { q:"O que são agentes de risco físico no trabalho?", o:["Produtos químicos tóxicos","Ruído, calor, frio, vibrações, radiações","Vírus e bactérias","Levantamento de peso excessivo"], a:1 },
+  { q:"Em quanto tempo deve ser realizado o exame admissional do trabalhador?", o:["Até 30 dias após a contratação","Antes do início das atividades","Até 7 dias após a contratação","Nos primeiros 3 meses"], a:1 },
+  { q:"O que é periculosidade no trabalho?", o:["Qualquer trabalho considerado difícil","Exposição permanente a inflamáveis, explosivos, energia elétrica ou atividades de segurança pessoal","Trabalho com produtos químicos corrosivos","Trabalho em horário noturno"], a:1 },
+  { q:"Qual EPI protege as vias respiratórias contra poeiras e névoas?", o:["Protetor auricular","Óculos de segurança","Respirador / máscara respiratória","Capacete"], a:2 },
+  { q:"O que deve conter um kit de primeiros socorros básico?", o:["Apenas band-aids e algodão","Curativos, luvas, tesoura, soro fisiológico, atadura e antisséptico","Apenas medicamentos para dor","Somente gazes e esparadrapo"], a:1 },
+  { q:"Qual a diferença entre EPI e EPC?", o:["EPI protege coletivamente, EPC individualmente","EPI protege individualmente, EPC protege coletivamente","São a mesma coisa","EPI é obrigatório, EPC é opcional"], a:1 },
+  { q:"O que significa o símbolo de 'caveira com ossos cruzados' em embalagens?", o:["Material inflamável","Substância tóxica ou venenosa","Material radioativo","Produto corrosivo"], a:1 },
+  { q:"Qual a função da brigada de incêndio?", o:["Apenas chamar o Corpo de Bombeiros","Prevenir, combater e auxiliar na evacuação em situações de emergência","Realizar manutenção nos extintores","Inspecionar EPIs dos funcionários"], a:1 },
+  { q:"Quando um trabalhador deve recusar uma tarefa por segurança?", o:["Nunca, pois o empregador tem sempre razão","Quando a tarefa oferecer risco grave e iminente à sua vida ou saúde","Apenas quando não tiver EPI disponível","Somente se houver autorização do supervisor"], a:1 },
+  { q:"Qual a frequência mínima de reuniões ordinárias da CIPA em empresas com mais de 50 funcionários?", o:["Semanal","Quinzenal","Mensal","Trimestral"], a:2 },
+  { q:"O que é o mapa de riscos da CIPA?", o:["Um mapa geográfico da empresa","Representação gráfica dos riscos existentes nos setores de trabalho","Um documento de registro de acidentes","Planta baixa da empresa para fins administrativos"], a:1 },
+  { q:"Qual EPI é obrigatório em obras de construção civil?", o:["Apenas luvas","Apenas óculos","Capacete de segurança","Apenas bota de segurança"], a:2 },
+  { q:"O que é ordem e limpeza (5S) no ambiente de trabalho?", o:["Uma norma de segurança específica para indústrias","Metodologia japonesa para organização, limpeza e melhoria do ambiente de trabalho","Um tipo de treinamento de primeiros socorros","Um procedimento de evacuação de emergência"], a:1 },
+  { q:"Qual o principal objetivo da Semana Interna de Prevenção de Acidentes (SIPAT)?", o:["Aumentar a produtividade da empresa","Promover a saúde e segurança no trabalho por meio de atividades educativas","Apresentar novos produtos da empresa","Realizar confraternização entre funcionários"], a:1 },
+  { q:"O que fazer se um produto químico entrar em contato com os olhos?", o:["Esfregar os olhos com as mãos","Lavar imediatamente com água corrente por no mínimo 15 minutos e buscar atendimento médico","Pingar colírio e aguardar passar","Tampar o olho e ir ao banheiro"], a:1 },
+];
 
-        function checkAnswer(idx) {
-            const q = questions[currentQIndex];
-            const btns = document.querySelectorAll('.opt');
-            btns.forEach(b => b.disabled = true);
+// ============================================================
+// ESTADO DO JOGO
+// ============================================================
+let currentPlayer = { nome: '', setor: '' };
+let questoesRodada = [];
+let qAtual = 0;
+let pontos = 0;
+let acertos = 0;
+let rankingTimer = null;
 
-            if(idx === q.ans) {
-                btns[idx].classList.add('correct');
-                currentUser.score += 100;
-                currentUser.hits++;
-                showFeedback(true);
-            } else {
-                btns[idx].classList.add('wrong');
-                btns[q.ans].classList.add('reveal-correct');
-                showFeedback(false);
-            }
+// ============================================================
+// NAVEGAÇÃO
+// ============================================================
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-            document.getElementById('gh-score').innerText = currentUser.score;
+function showRegister() {
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-dept').value = '';
+  document.getElementById('inp-outro').value = '';
+  document.getElementById('field-outro').style.display = 'none';
+  goTo('screen-register');
+}
 
-            setTimeout(() => {
-                currentQIndex++;
-                if(currentQIndex < totalQuestions) {
-                    loadQuestion();
-                } else {
-                    finishGame();
-                }
-            }, 2000);
-        }
+// Mostrar campo "outro setor"
+document.getElementById('inp-dept').addEventListener('change', function() {
+  document.getElementById('field-outro').style.display = this.value === 'Outro' ? 'block' : 'none';
+});
 
-        function showFeedback(isCorrect) {
-            const overlay = document.getElementById('feedback-overlay');
-            const emoji = document.getElementById('fb-emoji');
-            const word = document.getElementById('fb-word');
-            
-            overlay.className = isCorrect ? 'show fb-correct' : 'show fb-wrong';
-            emoji.innerText = isCorrect ? '✅' : '❌';
-            word.innerText = isCorrect ? 'CORRETO!' : 'OPS...';
-            
-            setTimeout(() => overlay.classList.remove('show'), 1500);
-        }
+// ============================================================
+// INICIAR JOGO
+// ============================================================
+function startGame() {
+  const nome = document.getElementById('inp-name').value.trim();
+  const deptSelect = document.getElementById('inp-dept').value;
+  const deptOutro = document.getElementById('inp-outro').value.trim();
+  const setor = deptSelect === 'Outro' ? (deptOutro || 'Outro') : deptSelect;
 
-        function useHint() {
-            const q = questions[currentQIndex];
-            const box = document.getElementById('hint-box');
-            box.innerText = q.hint;
-            box.style.display = "block";
-            document.getElementById('btn-hint').disabled = true;
-            currentUser.score -= 20; // Penalidade por dica
-            document.getElementById('gh-score').innerText = currentUser.score;
-        }
+  if (!nome) { alert('Por favor, informe seu nome!'); return; }
+  if (!setor) { alert('Por favor, selecione seu setor!'); return; }
 
-        function finishGame() {
-            saveScore();
-            document.getElementById('res-name').innerText = currentUser.name;
-            document.getElementById('res-big').innerText = currentUser.score;
-            document.getElementById('res-acertos').innerText = `${currentUser.hits} acertos de ${totalQuestions} perguntas`;
-            document.getElementById('res-bar').style.width = `${(currentUser.hits / totalQuestions) * 100}%`;
-            goTo('screen-result');
-        }
+  currentPlayer = { nome, setor };
+  pontos = 0;
+  acertos = 0;
+  qAtual = 0;
 
-        function saveScore() {
-            let ranking = JSON.parse(localStorage.getItem('quiz_ranking') || '[]');
-            ranking.push(currentUser);
-            ranking.sort((a, b) => b.score - a.score);
-            localStorage.setItem('quiz_ranking', JSON.stringify(ranking.slice(0, 10)));
-        }
+  // Sortear 5 perguntas aleatórias do banco de 50
+  questoesRodada = sortear(BANCO, 5);
 
-        function showRanking() {
-            const list = document.getElementById('rank-list');
-            const ranking = JSON.parse(localStorage.getItem('quiz_ranking') || '[]');
-            
-            if(ranking.length === 0) {
-                list.innerHTML = `<div class="empty-rank">Nenhum recorde ainda.<br>Seja o primeiro a jogar!</div>`;
-            } else {
-                list.innerHTML = ranking.map((player, i) => `
-                    <div class="rank-item">
-                        <div class="rank-pos p${i+1}">${i+1}</div>
-                        <div class="rank-info">
-                            <div class="rank-name">${player.name}</div>
-                            <div class="rank-dept">${player.dept}</div>
-                        </div>
-                        <div class="rank-right">
-                            <div class="rank-score">${player.score}</div>
-                            <div class="rank-hits">${player.hits} ACERTOS</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            goTo('screen-ranking');
-        }
-    </script>
+  // Mostrar tela "próximo participante" com countdown
+  document.getElementById('next-name').textContent = nome;
+  document.getElementById('next-dept').textContent = setor;
+  goTo('screen-next');
+  startCountdown(3, () => {
+    goTo('screen-game');
+    document.getElementById('gh-name').textContent = nome;
+    document.getElementById('gh-dept').textContent = setor;
+    mostrarPergunta(0);
+  });
+}
+
+function sortear(arr, n) {
+  const copia = [...arr];
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copia[i], copia[j]] = [copia[j], copia[i]];
+  }
+  return copia.slice(0, n);
+}
+
+// ============================================================
+// COUNTDOWN
+// ============================================================
+function startCountdown(seconds, callback) {
+  const numEl = document.getElementById('cd-num');
+  const ringEl = document.getElementById('ring-fill');
+  const total = 220;
+  let remaining = seconds * 1000;
+  const totalMs = seconds * 1000;
+
+  numEl.textContent = seconds;
+  ringEl.style.strokeDashoffset = 0;
+
+  const interval = setInterval(() => {
+    remaining -= 50;
+    const pct = remaining / totalMs;
+    ringEl.style.strokeDashoffset = total * (1 - pct);
+    numEl.textContent = Math.ceil(remaining / 1000);
+    if (remaining <= 0) {
+      clearInterval(interval);
+      callback();
+    }
+  }, 50);
+}
+
+// ============================================================
+// PERGUNTAS
+// ============================================================
+const LETRAS = ['A','B','C','D'];
+
+function mostrarPergunta(i) {
+  if (i >= questoesRodada.length) {
+    finalizarJogo();
+    return;
+  }
+
+  const p = questoesRodada[i];
+  const total = questoesRodada.length;
+
+  document.getElementById('q-num').textContent = `PERGUNTA ${i+1} DE ${total}`;
+  document.getElementById('gh-plabel').textContent = `Pergunta ${i+1} de ${total}`;
+  document.getElementById('prog-bar').style.width = `${(i / total) * 100}%`;
+  document.getElementById('q-text').textContent = p.q;
+  document.getElementById('gh-score').textContent = pontos;
+
+  const optsDiv = document.getElementById('opts');
+  optsDiv.innerHTML = '';
+
+  p.o.forEach((opcao, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-letter">${LETRAS[idx]}</span> ${opcao}`;
+    btn.onclick = () => responder(idx, p.a, btn, optsDiv);
+    optsDiv.appendChild(btn);
+  });
+}
+
+function responder(escolha, correta, btnClicado, optsDiv) {
+  // Desabilitar todos os botões
+  optsDiv.querySelectorAll('.opt').forEach(b => b.disabled = true);
+
+  const acertou = escolha === correta;
+
+  if (acertou) {
+    btnClicado.classList.add('correct');
+    pontos += 100;
+    acertos++;
+    document.getElementById('gh-score').textContent = pontos;
+    showFeedback(true);
+  } else {
+    btnClicado.classList.add('wrong');
+    // Revelar a correta
+    optsDiv.querySelectorAll('.opt')[correta].classList.add('reveal-correct');
+    showFeedback(false);
+  }
+
+  setTimeout(() => {
+    hideFeedback();
+    qAtual++;
+    mostrarPergunta(qAtual);
+  }, 1500);
+}
+
+function showFeedback(acertou) {
+  const el = document.getElementById('feedback-overlay');
+  el.className = '';
+  el.classList.add('show', acertou ? 'fb-correct' : 'fb-wrong');
+  document.getElementById('fb-emoji').textContent = acertou ? '✅' : '❌';
+  document.getElementById('fb-word').textContent = acertou ? 'CORRETO!' : 'ERROU!';
+}
+
+function hideFeedback() {
+  const el = document.getElementById('feedback-overlay');
+  el.className = '';
+}
+
+// ============================================================
+// FINALIZAR + SALVAR NO FIREBASE
+// ============================================================
+function finalizarJogo() {
+  const total = questoesRodada.length;
+  const pct = acertos / total;
+
+  let emoji = '😊';
+  let msg = 'Bom trabalho!';
+  if (pct === 1)       { emoji = '🏆'; msg = 'Perfeito! Mandou muito bem!'; }
+  else if (pct >= 0.8) { emoji = '🎉'; msg = 'Ótimo resultado!'; }
+  else if (pct >= 0.6) { emoji = '👍'; msg = 'Bom trabalho! Continue estudando!'; }
+  else if (pct >= 0.4) { emoji = '😅'; msg = 'Pode melhorar! Fique atento à SIPAT!'; }
+  else                 { emoji = '📚'; msg = 'Hora de estudar mais sobre segurança!'; }
+
+  document.getElementById('res-trophy').textContent = emoji;
+  document.getElementById('res-name').textContent = currentPlayer.nome;
+  document.getElementById('res-big').textContent = pontos;
+  document.getElementById('res-acertos').textContent = `${acertos} acerto${acertos !== 1 ? 's' : ''} de ${total} perguntas`;
+  document.getElementById('res-msg').textContent = msg;
+
+  goTo('screen-result');
+
+  // Animar barra de resultado
+  setTimeout(() => {
+    document.getElementById('res-bar').style.width = `${pct * 100}%`;
+  }, 300);
+
+  // Salvar no Firebase
+  db.collection("ranking").add({
+    nome: currentPlayer.nome,
+    setor: currentPlayer.setor,
+    pontos: pontos,
+    acertos: acertos,
+    total: total,
+    data: new Date()
+  }).catch(err => console.error("Erro ao salvar:", err));
+}
+
+// ============================================================
+// RANKING COM AUTO-ATUALIZAÇÃO
+// ============================================================
+function showRanking() {
+  goTo('screen-ranking');
+  carregarRanking();
+
+  // Limpar timer anterior se existir
+  if (rankingTimer) clearInterval(rankingTimer);
+
+  // Atualizar a cada 30 segundos
+  rankingTimer = setInterval(() => {
+    if (document.getElementById('screen-ranking').classList.contains('active')) {
+      carregarRanking();
+    } else {
+      clearInterval(rankingTimer);
+    }
+  }, 30000);
+}
+
+function carregarRanking() {
+  const lista = document.getElementById('rank-list');
+  const refresh = document.getElementById('rank-refresh');
+
+  db.collection("ranking")
+    .orderBy("pontos", "desc")
+    .limit(10)
+    .get()
+    .then(snap => {
+      if (snap.empty) {
+        lista.innerHTML = '<div class="empty-rank">🎮 Nenhum participante ainda.<br>Seja o primeiro a jogar!</div>';
+        return;
+      }
+
+      lista.innerHTML = '';
+      const medals = ['🥇','🥈','🥉'];
+      const posClasses = ['p1','p2','p3'];
+
+      snap.forEach((doc, i) => {
+        const d = doc.data();
+        const posClass = i < 3 ? posClasses[i] : 'pN';
+        const medal = i < 3 ? medals[i] : '🔹';
+        const hits = d.acertos !== undefined ? `${d.acertos}/${d.total || 5} acertos` : '';
+
+        lista.innerHTML += `
+          <div class="rank-item">
+            <div class="rank-pos ${posClass}">${i+1}</div>
+            <div class="rank-medal">${medal}</div>
+            <div class="rank-info">
+              <div class="rank-name">${d.nome}</div>
+              <div class="rank-dept">${d.setor}</div>
+            </div>
+            <div class="rank-right">
+              <div class="rank-score">${d.pontos}</div>
+              <div class="rank-hits">${hits}</div>
+            </div>
+          </div>`;
+      });
+
+      // Atualizar hora da última atualização
+      const agora = new Date();
+      refresh.textContent = `Atualizado às ${agora.getHours().toString().padStart(2,'0')}:${agora.getMinutes().toString().padStart(2,'0')} · atualiza a cada 30s`;
+    })
+    .catch(err => {
+      console.error("Erro ao carregar ranking:", err);
+      refresh.textContent = 'Erro ao carregar. Verifique a conexão.';
+    });
+}
+</script>
 </body>
 </html>
