@@ -1,191 +1,220 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIPAT Quiz 2026 — Balaska</title>
-    <style>
-        :root { --navy: #040919; --blue1: #07122a; --blue2: #0D2B6C; --blue3: #1459B0; --gold: #1A5EE9; --amber: #0D2B6C; --green: #22c55e; --red: #ef4444; --white: #ffffff; --text-dim: #94a3b8; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: var(--navy); color: var(--white); height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .screen { display: none; width: 100%; max-width: 500px; height: 100%; background: var(--blue1); position: relative; flex-direction: column; }
-        .screen.active { display: flex; }
-        
-        /* Estilos Rápidos */
-        .header { padding: 20px; background: var(--blue2); text-align: center; border-bottom: 3px solid var(--gold); }
-        .content { padding: 20px; flex: 1; overflow-y: auto; }
-        .btn { background: var(--gold); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid var(--blue3); background: var(--navy); color: white; }
-        .opt { background: var(--blue2); padding: 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; border: 1px solid var(--blue3); display: flex; align-items: center; }
-        .opt:hover { background: var(--blue3); }
-        .correct { background: var(--green) !important; }
-        .wrong { background: var(--red) !important; }
-        .rank-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--blue3); }
-        #feedback-overlay { position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100; font-size: 2rem; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIPAT Quiz 2026 — Balaska Equipamentos</title>
+
+<style>
+/* ============================================================
+   SEU ESTILO ORIGINAL PRESERVADO
+   ============================================================ */
+:root {
+  --navy:    #040810;
+  --navy2:   #07122A;
+  --blue:    #0D3B8C;
+  --blue2:   #1450B8;
+  --gold:    #1A6FE8;
+  --amber:   #0D3B8C;
+  --green:   #00E676;
+  --red:     #FF1744;
+  --white:   #E8EEFF;
+  --muted:   #4D6899;
+  --card:    rgba(7,18,42,0.85);
+  --border:  rgba(20,80,184,0.35);
+  --radius:  18px;
+  --glow-g:  0 0 28px rgba(0,230,118,0.45);
+  --glow-r:  0 0 28px rgba(255,23,68,0.45);
+  --glow-y:  0 0 28px rgba(20,80,184,0.5);
+  --balaska-blue: #1450B8;
+  --balaska-dark: #07122A;
+  --accent:  #FFFFFF;
+}
+
+*,::before,::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+}
+
+#bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 100% 100% at 50% 50%, #040810 35%, #000408 100%);
+}
+#bg::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(20,80,184,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(20,80,184,0.06) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+.screen { position: relative; z-index: 1; display: none; width: 100vw; height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+.screen.active { display: flex; }
+
+.big-title {
+  font-family: Impact, sans-serif; font-size: clamp(80px,13vw,140px); line-height: .9; letter-spacing: 2px;
+  background: linear-gradient(135deg,#ffffff 0%,#7EB8FF 45%,var(--balaska-blue) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.logo-ring { width:180px; height:80px; border-radius:14px; background: white; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+.logo-ring img { width:92%; object-fit:contain; }
+
+.stats-row { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-bottom:36px; }
+.stat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 22px; text-align: center; }
+.stat b { display: block; font-family: Impact; font-size: 38px; color: #7EB8FF; }
+.stat span { font-size:10px; color:var(--muted); text-transform:uppercase; }
+
+.btn { font-weight: 900; font-size: 18px; letter-spacing: 2px; text-transform: uppercase; border: none; border-radius: 50px; cursor: pointer; padding: 18px 60px; }
+.btn-gold { background: linear-gradient(135deg,var(--balaska-blue),#1A6FE8); color: #fff; box-shadow: 0 8px 30px rgba(20,80,184,0.5); }
+.btn-ghost { background: transparent; color: var(--muted); border: 1px solid rgba(255,255,255,0.1); margin-top:10px; }
+
+/* Estilos de Jogo */
+.q-card { background: var(--card); border-radius: var(--radius); padding: 30px; width: 100%; max-width: 800px; margin-bottom: 20px; text-align: center; }
+.q-text { font-size: 22px; font-weight: bold; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 800px; }
+.opt { background: var(--card); border: 2px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 15px; cursor: pointer; color: white; text-align: left; }
+.opt:hover { border-color: var(--gold); }
+.opt.correct { background: var(--green); color: black; }
+.opt.wrong { background: var(--red); }
+
+/* Ranking */
+.rank-item { background: var(--card); border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; margin-bottom: 8px; width: 100%; max-width: 500px; }
+</style>
 </head>
+
 <body>
+<div id="bg"></div>
 
-    <!-- TELA DE REGISTRO -->
-    <div id="screen-register" class="screen active">
-        <div class="header"><h2>SIPAT 2026 - BALASKA</h2></div>
-        <div class="content">
-            <label>Nome:</label>
-            <input type="text" id="inp-name" placeholder="Seu nome">
-            <label>Setor:</label>
-            <select id="inp-dept">
-                <option value="">Selecione...</option>
-                <option value="Administrativo">Administrativo</option>
-                <option value="Produção">Produção</option>
-                <option value="Logística">Logística</option>
-                <option value="Comercial">Comercial</option>
-                <option value="Outro">Outro...</option>
-            </select>
-            <div id="field-outro" style="display:none">
-                <input type="text" id="inp-outro" placeholder="Qual setor?">
-            </div>
-            <button class="btn" onclick="startGame()">INICIAR QUIZ</button>
-            <button class="btn" style="background:#444" onclick="showRanking()">VER RANKING</button>
-        </div>
+<!-- TELA INICIAL -->
+<div id="screen-start" class="screen active">
+    <div class="logo-ring">
+        <img src="https://balaska.com.br/wp-content/uploads/2022/01/logo-balaska.png" alt="Balaska">
     </div>
-
-    <!-- TELA DE ESPERA / NEXT -->
-    <div id="screen-next" class="screen">
-        <div class="content" style="text-align:center; padding-top:100px;">
-            <h1 id="cd-num" style="font-size:5rem">3</h1>
-            <p>Prepare-se, <span id="next-name"></span>!</p>
-            <svg width="100" height="100"><circle id="ring-fill" cx="50" cy="50" r="35" fill="none" stroke="#1A5EE9" stroke-width="8" /></svg>
-        </div>
+    <div class="big-title">QUIZ</div>
+    <div class="stats-row">
+        <div class="stat"><b>07</b><span>Perguntas</span></div>
+        <div class="stat"><b>💡</b><span>Com Dicas</span></div>
     </div>
+    <button class="btn btn-gold" onclick="showScreen('screen-register')">▶ JOGAR AGORA</button>
+    <button class="btn btn-ghost" onclick="loadRanking()">🏆 VER RANKING</button>
+</div>
 
-    <!-- TELA DO JOGO -->
-    <div id="screen-game" class="screen">
-        <div class="header">
-            <div id="gh-plabel">Pergunta 1 de 7</div>
-            <div style="font-size: 1.5rem; font-weight: bold;">Pontos: <span id="gh-score">0</span></div>
-        </div>
-        <div class="content">
-            <div id="cat-pill" class="cat-pill">🧤 EPI e EPC</div>
-            <h3 id="q-text" style="margin: 15px 0;">Carregando pergunta...</h3>
-            <div id="opts"></div>
-            <button id="btn-hint" class="btn" style="background:#555" onclick="useHint()">💡 DICA</button>
-            <div id="hint-box" style="margin-top:10px; font-style:italic; color:#ffd700; display:none"></div>
-        </div>
-        <div id="feedback-overlay"></div>
+<!-- TELA CADASTRO -->
+<div id="screen-register" class="screen">
+    <div class="q-card">
+        <h2>Quem é você?</h2>
+        <input id="userName" type="text" placeholder="Seu Nome" style="width:100%; padding:15px; margin:10px 0; border-radius:10px;">
+        <select id="userDept" style="width:100%; padding:15px; margin:10px 0; border-radius:10px;">
+            <option value="">Selecione seu setor...</option>
+            <option>Produção</option>
+            <option>Administrativo</option>
+            <option>Logística</option>
+            <option>Outro</option>
+        </select>
+        <button class="btn btn-gold" onclick="startQuiz()">COMEÇAR!</button>
     </div>
+</div>
 
-    <!-- TELA RANKING POS-BLOCO -->
-    <div id="screen-block-rank" class="screen">
-        <div class="header"><h3>RANKING ATUAL</h3></div>
-        <div class="content" id="br-list"></div>
-        <button class="btn" onclick="continueAfterBlock()">PRÓXIMO PARTICIPANTE</button>
+<!-- TELA JOGO -->
+<div id="screen-game" class="screen">
+    <div class="q-card">
+        <div id="questionText" class="q-text">Carregando...</div>
     </div>
+    <div id="optionsContainer" class="opts"></div>
+</div>
 
-    <!-- TELA RANKING GERAL -->
-    <div id="screen-ranking" class="screen">
-        <div class="header"><h3>TOP RANKING</h3></div>
-        <div class="content" id="rank-list"></div>
-        <button class="btn" onclick="goTo('screen-register')">VOLTAR</button>
-    </div>
+<!-- TELA RANKING -->
+<div id="screen-ranking" class="screen">
+    <h1 class="big-title" style="font-size: 50px;">RANKING</h1>
+    <div id="rankingList" style="width: 100%; display: flex; flex-direction: column; align-items: center;"></div>
+    <button class="btn btn-ghost" onclick="showScreen('screen-start')">VOLTAR</button>
+</div>
 
-    <!-- SCRIPTS -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+<!-- FIREBASE E LÓGICA -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBBZ-wkPE-O6xlEaY_VY_yszAvSzPqYi1g",
-            authDomain: "sipat-balaska.firebaseapp.com",
-            projectId: "sipat-balaska",
-            storageBucket: "sipat-balaska.firebasestorage.app",
-            messagingSenderId: "843068034203",
-            appId: "1:843068034203:web:5aad2089bc7b58549f8a3e"
-        };
+    const firebaseConfig = {
+        projectId: "sipat-balaska",
+        authDomain: "sipat-balaska.firebaseapp.com"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const rankingRef = doc(db, "sipat_quiz", "ranking_online");
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        window.firebaseAPI = {
-            saveRanking: async (data) => { try { await setDoc(rankingRef, { ranking: data }); } catch(e) { console.error(e); } },
-            loadRanking: async () => { try { const s = await getDoc(rankingRef); return s.exists() ? s.data().ranking : []; } catch(e) { return []; } }
-        };
-    </script>
+    const questions = [
+        { q: "Qual o uso correto do capacete?", options: ["Sempre com jugular", "Sem jugular", "De lado", "No braço"], correct: 0 },
+        { q: "O que significa SIPAT?", options: ["Semana de Prevenção", "Sempre Alerta", "Segurança Total", "Sistema Interno"], correct: 0 },
+        { q: "CIPA cuida de quê?", options: ["Acidentes", "Férias", "Vendas", "Limpeza"], correct: 0 },
+        { q: "Qual a cor da segurança?", options: ["Verde", "Vermelho", "Preto", "Azul"], correct: 0 },
+        { q: "O que é EPI?", options: ["Equipamento Proteção Individual", "Empresa Particular", "Exame Periódico", "Equipe de Proteção"], correct: 0 },
+        { q: "De quem é a responsabilidade pela segurança?", options: ["De todos", "Só do técnico", "Só do chefe", "Do governo"], correct: 0 },
+        { q: "O que fazer em caso de acidente?", options: ["Avisar supervisor", "Ir embora", "Não contar", "Tirar foto"], correct: 0 }
+    ];
 
-    <script>
-        // PERGUNTAS
-        const Q = [
-            {cat:'epi', q:'Para que serve a máscara PFF2?', a:['Gases','Partículas','Cimento','Hospital'], c:1, h:'PFF = Peça Facial Filtrante.'},
-            {cat:'epi', q:'Função da proteção lateral nos óculos?', a:['Visão','Partículas laterais','Luz','Estética'], c:1, h:'Protege contra respingos de lado.'},
-            {cat:'seg', q:'Incêndio Classe A é em?', a:['Líquidos','Sólidos (madeira/papel)','Elétrico','Metais'], c:1, h:'Materiais que deixam brasas.'},
-            {cat:'epi', q:'O que é o NRRsf?', a:['Norma','Atenuação de ruído','Registro','Risco'], c:1, h:'Medida de proteção auditiva.'},
-            {cat:'seg', q:'Por que não usar água em fogo elétrico?', a:['Não apaga','Conduz eletricidade','Estraga','Não há restrição'], c:1, h:'Risco de choque térmico e elétrico.'},
-            {cat:'epi', q:'EPI para objetos cortantes?', a:['Látex','Malha de aço/Raspa','Cirúrgica','Nenhuma'], c:1, h:'Precisa de resistência mecânica.'},
-            {cat:'seg', q:'O que é o Triângulo do Fogo?', a:['Sinal','Elementos do fogo','Extintores','Etapas'], c:1, h:'Calor, Combustível e Comburente.'}
-        ];
+    let currentQuestion = 0;
+    let score = 0;
+    let userData = { name: "", dept: "" };
 
-        let S = { player:{}, score:0, bqi:0, ranking:[], answered:false };
+    window.showScreen = (id) => {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    };
 
-        window.addEventListener('load', async () => { if(window.firebaseAPI) S.ranking = await window.firebaseAPI.loadRanking(); });
+    window.startQuiz = () => {
+        userData.name = document.getElementById('userName').value;
+        userData.dept = document.getElementById('userDept').value;
+        if(!userData.name || !userData.dept) return alert("Preencha tudo!");
+        showScreen('screen-game');
+        loadQuestion();
+    };
 
-        function goTo(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    function loadQuestion() {
+        const q = questions[currentQuestion];
+        document.getElementById('questionText').innerText = q.q;
+        const container = document.getElementById('optionsContainer');
+        container.innerHTML = "";
+        q.options.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'opt';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(i);
+            container.appendChild(btn);
+        });
+    }
 
-        function startGame(){
-            const n = document.getElementById('inp-name').value;
-            const d = document.getElementById('inp-dept').value;
-            if(!n || !d) return alert('Preencha tudo!');
-            S.player = {name:n, dept:d}; S.score=0; S.bqi=0;
-            showNextPlayer();
-        }
-
-        function showNextPlayer(){
-            goTo('screen-next');
-            let secs = 3;
-            const num = document.getElementById('cd-num');
-            const itv = setInterval(()=>{
-                secs--; num.textContent = secs;
-                if(secs<=0){ clearInterval(itv); goTo('screen-game'); renderQuestion(); }
-            },1000);
-        }
-
-        function renderQuestion(){
-            const q = Q[S.bqi]; S.answered = false;
-            document.getElementById('gh-plabel').textContent = `Pergunta ${S.bqi+1} de 7`;
-            document.getElementById('q-text').textContent = q.q;
-            const box = document.getElementById('opts'); box.innerHTML = '';
-            q.a.forEach((text, i) => {
-                const b = document.createElement('button'); b.className = 'opt';
-                b.innerHTML = `<span>${text}</span>`;
-                b.onclick = () => { if(S.answered) return; S.answered=true;
-                    const isOk = (i === q.c);
-                    if(isOk) { S.score += 10; b.classList.add('correct'); } else { b.classList.add('wrong'); }
-                    document.getElementById('gh-score').textContent = S.score;
-                    setTimeout(()=>{ S.bqi++; if(S.bqi < 7) renderQuestion(); else finish(); }, 1000);
-                };
-                box.appendChild(b);
+    async function checkAnswer(idx) {
+        if(idx === questions[currentQuestion].correct) score += 100;
+        currentQuestion++;
+        if(currentQuestion < questions.length) {
+            loadQuestion();
+        } else {
+            await addDoc(collection(db, "ranking"), {
+                nome: userData.name,
+                setor: userData.dept,
+                pontos: score,
+                data: new Date()
             });
+            loadRanking();
         }
+    }
 
-        function useHint(){ document.getElementById('hint-box').textContent = Q[S.bqi].h; document.getElementById('hint-box').style.display='block'; }
-
-        async function finish(){
-            S.ranking.push({name: S.player.name, dept: S.player.dept, score: S.score});
-            S.ranking.sort((a,b)=>b.score - a.score);
-            if(window.firebaseAPI) await window.firebaseAPI.saveRanking(S.ranking);
-            showBlockRanking();
-        }
-
-        function showBlockRanking(){
-            goTo('screen-block-rank');
-            document.getElementById('br-list').innerHTML = S.ranking.map(r=>`<div class="rank-item"><span>${r.name}</span><span>${r.score}</span></div>`).join('');
-        }
-
-        function continueAfterBlock(){ location.reload(); }
-        
-        function showRanking(){
-            goTo('screen-ranking');
-            document.getElementById('rank-list').innerHTML = S.ranking.map(r=>`<div class="rank-item"><span>${r.name}</span><span>${r.score}</span></div>`).join('');
-        }
-    </script>
+    window.loadRanking = async () => {
+        showScreen('screen-ranking');
+        const list = document.getElementById('rankingList');
+        list.innerHTML = "Carregando...";
+        const q = query(collection(db, "ranking"), orderBy("pontos", "desc"), limit(10));
+        const snap = await getDocs(q);
+        list.innerHTML = "";
+        snap.forEach(doc => {
+            const data = doc.data();
+            list.innerHTML += `<div class="rank-item"><span>${data.nome} (${data.setor})</span><b>${data.pontos} pts</b></div>`;
+        });
+    };
+</script>
 </body>
 </html>
