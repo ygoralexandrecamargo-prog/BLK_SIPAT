@@ -2,96 +2,52 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <title>SIPAT Quiz - Balaska</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIPAT Quiz 2026 — Balaska Equipamentos</title>
     <style>
-        /* CSS SIMPLIFICADO E ROBUSTO PARA EVITAR TELA BRANCA */
-        :root {
-            --navy: #040810; --navy2: #07122A; --blue: #0D3B8C; --blue2: #1450B8;
-            --gold: #1A6FE8; --green: #00E676; --red: #FF1744; --white: #E8EEFF;
-            --muted: #4D6899; --card: rgba(7,18,42,0.9); --border: rgba(20,80,184,0.35);
-        }
-        *,::before,::after { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--navy); color: var(--white);
-            height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-        #bg { position: fixed; inset: 0; z-index: -1; background: linear-gradient(135deg, #040810 0%, #07122A 100%); }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .screen.active { display: flex; }
-        .glass-card { background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 450px; }
-        .btn { padding: 15px 30px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; margin: 10px; width: 100%; max-width: 250px; transition: 0.2s; }
-        .btn-gold { background: var(--blue2); color: white; }
-        .btn-gold:hover { transform: scale(1.05); background: #1A6FE8; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: white; }
-        .rank-list { width: 100%; max-width: 500px; max-height: 400px; overflow-y: auto; margin: 20px 0; }
-        .rank-item { display: flex; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 12px; margin: 5px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        .opt { background: rgba(255,255,255,0.05); padding: 15px; margin: 8px 0; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); width: 100%; text-align: left; color: white; }
-        .opt:hover { background: rgba(20,80,184,0.2); }
+        body { background: #040810; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .screen { display: none; }
+        .active { display: block; }
+        .btn { padding: 15px; width: 200px; margin: 10px; cursor: pointer; background: #1450B8; color: white; border: none; border-radius: 5px; }
+        input, select { padding: 10px; width: 80%; max-width: 300px; margin: 10px; }
+        .rank-item { border-bottom: 1px solid #222; padding: 10px; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
-    <div id="bg"></div>
 
-    <!-- TELA INICIAL -->
+    <!-- INÍCIO -->
     <div id="screen-start" class="screen active">
-        <h1 style="font-size: 3.5rem; margin-bottom: 10px;">QUIZ SIPAT</h1>
-        <p style="letter-spacing: 3px; color: var(--muted); margin-bottom: 30px;">BALASKA EQUIPAMENTOS</p>
-        <button class="btn btn-gold" onclick="goTo('screen-register')">INICIAR DESAFIO</button>
-        <button class="btn" style="background:transparent; border:1px solid white; color:white;" onclick="abrirRanking()">RANKING GERAL</button>
+        <h1>QUIZ SIPAT 2026</h1>
+        <button class="btn" onclick="goTo('screen-reg')">JOGAR</button>
+        <button class="btn" onclick="carregarRanking()">RANKING</button>
     </div>
 
-    <!-- TELA CADASTRO -->
-    <div id="screen-register" class="screen">
-        <div class="glass-card">
-            <h2 style="margin-bottom: 20px;">Identificação</h2>
-            <input type="text" id="inp-name" placeholder="Seu Nome Completo">
-            <select id="inp-dept">
-                <option value="">Selecione seu Setor</option>
-                <option value="Produção">Produção</option>
-                <option value="Logística">Logística</option>
-                <option value="Manutenção">Manutenção</option>
-                <option value="Adm">Administrativo</option>
-                <option value="Segurança">Segurança</option>
-            </select>
-            <button class="btn btn-gold" style="margin-top:20px;" onclick="iniciarJogo()">JOGAR AGORA</button>
-        </div>
+    <!-- REGISTRO -->
+    <div id="screen-reg" class="screen">
+        <input type="text" id="nome" placeholder="Seu Nome">
+        <input type="text" id="setor" placeholder="Seu Setor">
+        <button class="btn" onclick="iniciar()">COMEÇAR</button>
     </div>
 
-    <!-- TELA JOGO -->
+    <!-- JOGO -->
     <div id="screen-game" class="screen">
-        <div style="width:100%; max-width:600px;">
-            <h2 id="q-text" style="margin-bottom: 30px; min-height: 80px;">Carregando pergunta...</h2>
-            <div id="opts"></div>
-        </div>
+        <h2 id="pergunta"></h2>
+        <div id="opcoes"></div>
     </div>
 
-    <!-- TELA RESULTADO -->
-    <div id="screen-result" class="screen">
-        <div class="glass-card">
-            <h2 style="color: var(--muted);">Pontuação Final</h2>
-            <h1 id="res-score" style="font-size: 5rem; color: #7EB8FF;">0</h1>
-            <p id="res-msg" style="margin-bottom: 30px;"></p>
-            <button class="btn btn-gold" onclick="location.reload()">NOVO JOGADOR</button>
-            <button class="btn" onclick="abrirRanking()">VER RANKING</button>
-        </div>
+    <!-- RANKING -->
+    <div id="screen-rank" class="screen">
+        <h2>TOP 10</h2>
+        <div id="lista-rank">Carregando...</div>
+        <button class="btn" onclick="location.reload()">VOLTAR</button>
     </div>
 
-    <!-- TELA RANKING -->
-    <div id="screen-ranking" class="screen">
-        <h1 style="margin-bottom: 5px;">TOP 10</h1>
-        <p style="color: var(--muted); margin-bottom: 20px;">LÍDERES SIPAT 2026</p>
-        <div id="rank-list" class="rank-list"></div>
-        <button class="btn" onclick="goTo('screen-start')">VOLTAR AO INÍCIO</button>
-    </div>
-
-    <!-- FIREBASE SDKs (Versão 8 compatível) -->
+    <!-- SCRIPTS FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
     <script>
-        // 1. CONFIGURAÇÃO (CIRÚRGICA)
+        // CONFIGURAÇÃO
         const firebaseConfig = {
             apiKey: "AIzaSyBBZ-wkPE-O6xlEaY_VY_yszAvSzPqYi1g",
             authDomain: "sipat-balaska.firebaseapp.com",
@@ -100,20 +56,14 @@
             messagingSenderId: "843068034203",
             appId: "1:843068034203:web:5aad2089bc7b58549f8a3e"
         };
-
-        // Inicialização
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 2. DADOS E LÓGICA
-        let score = 0;
-        let index = 0;
+        let pontos = 0;
         const perguntas = [
-            { q: "Qual a função principal do EPI?", o: ["Conforto", "Proteção do trabalhador", "Estética", "Regra de moda"], a: 1 },
-            { q: "O que deve ser feito em caso de acidente?", o: ["Esconder", "Limpar rápido", "Comunicar ao supervisor", "Ignorar"], a: 2 },
-            { q: "Qual a cor da sinalização de perigo?", o: ["Verde", "Azul", "Branco", "Vermelho"], a: 3 },
-            { q: "Quem é responsável pela segurança?", o: ["Apenas o técnico", "Apenas o dono", "Todos os colaboradores", "O governo"], a: 2 },
-            { q: "O que significa a sigla CIPA?", o: ["Comissão Interna de Prevenção de Acidentes", "Centro de Inteligência", "Clube Interno", "Controle de Itens"], a: 0 }
+            { q: "Use EPI?", o: ["Sim", "Não"], a: 0 },
+            { q: "CIPA é importante?", o: ["Não", "Sim"], a: 1 }
         ];
 
         function goTo(id) {
@@ -121,77 +71,51 @@
             document.getElementById(id).classList.add('active');
         }
 
-        function iniciarJogo() {
-            const nome = document.getElementById('inp-name').value;
-            const setor = document.getElementById('inp-dept').value;
-            if(!nome || !setor) return alert("Por favor, preencha nome e setor!");
-            score = 0;
-            index = 0;
+        function iniciar() {
+            if(!document.getElementById('nome').value) return alert("Nome!");
             goTo('screen-game');
-            mostrarPergunta();
+            showQ(0);
         }
 
-        function mostrarPergunta() {
-            if(index >= perguntas.length) return finalizar();
-            const p = perguntas[index];
-            document.getElementById('q-text').innerText = p.q;
-            const box = document.getElementById('opts');
-            box.innerHTML = "";
-            p.o.forEach((opt, i) => {
-                const btn = document.createElement('button');
-                btn.className = "opt";
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    if(i === p.a) score += 200;
-                    index++;
-                    mostrarPergunta();
+        function showQ(i) {
+            if(i >= perguntas.length) return finalizar();
+            const p = perguntas[i];
+            document.getElementById('pergunta').innerText = p.q;
+            const div = document.getElementById('opcoes');
+            div.innerHTML = "";
+            p.o.forEach((opt, idx) => {
+                const b = document.createElement('button');
+                b.className = "btn";
+                b.innerText = opt;
+                b.onclick = () => {
+                    if(idx === p.a) pontos += 100;
+                    showQ(i+1);
                 };
-                box.appendChild(btn);
+                div.appendChild(b);
             });
         }
 
         function finalizar() {
-            const nome = document.getElementById('inp-name').value;
-            const setor = document.getElementById('inp-dept').value;
-            document.getElementById('res-score').innerText = score;
+            const nome = document.getElementById('nome').value;
+            const setor = document.getElementById('setor').value;
             
-            // Mensagem motivacional
-            let msg = score >= 800 ? "Excelente! Você é um mestre da segurança!" : "Bom trabalho! Continue focado na prevenção.";
-            document.getElementById('res-msg').innerText = msg;
-            
-            goTo('screen-result');
-
-            // SALVAR NO FIREBASE ONLINE
             db.collection("ranking").add({
                 nome: nome,
                 setor: setor,
-                pontos: score,
-                data: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => console.log("Resultado salvo!"));
+                pontos: pontos,
+                data: new Date()
+            }).then(() => carregarRanking());
         }
 
-        function abrirRanking() {
-            goTo('screen-ranking');
-            const list = document.getElementById('rank-list');
-            list.innerHTML = "<p>Carregando líderes...</p>";
-
+        function carregarRanking() {
+            goTo('screen-rank');
+            const lista = document.getElementById('lista-rank');
             db.collection("ranking").orderBy("pontos", "desc").limit(10).get().then(snap => {
-                list.innerHTML = "";
-                let i = 1;
+                lista.innerHTML = "";
                 snap.forEach(doc => {
                     const d = doc.data();
-                    list.innerHTML += `
-                        <div class="rank-item">
-                            <span><b>${i}º</b> ${d.nome} <small style="color:var(--muted)">(${d.setor})</small></span>
-                            <strong style="color:#7EB8FF">${d.pontos}</strong>
-                        </div>
-                    `;
-                    i++;
+                    lista.innerHTML += `<div class="rank-item"><span>${d.nome}</span> <b>${d.pontos}</b></div>`;
                 });
-                if(snap.empty) list.innerHTML = "Ainda não há pontuações.";
-            }).catch(e => {
-                console.error(e);
-                list.innerHTML = "Erro ao carregar dados.";
             });
         }
     </script>
